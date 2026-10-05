@@ -7,11 +7,11 @@ This document outlines the sequential phases and user stories for the AI Cover L
 ### 1. Project Scaffolding
 **Description**: Initialize the Next.js (App Router) project with standard Tailwind CSS to serve as the foundation for the application.
 **Acceptance Criteria**:
-- [ ] The Next.js app is created using the App Router.
-- [ ] Standard Tailwind CSS is configured (no non-standard Tailwind frameworks unless requested).
-- [ ] Project uses `npm` for package management.
-- [ ] Code is cleaned of default boilerplate and set up with a simple, modern layout.
-- [ ] All comments and documentation are written in English.
+- [x] The Next.js app is created using the App Router.
+- [x] Standard Tailwind CSS is configured (no non-standard Tailwind frameworks unless requested).
+- [x] Project uses `npm` for package management.
+- [x] Code is cleaned of default boilerplate and set up with a simple, modern layout.
+- [x] All comments and documentation are written in English.
 
 ## Phase 2: Client-side Data Entry & Local Sanitization (Local Brain)
 *This phase handles all client-side logic to replicate the "Local" part of the split-brain architecture, ensuring sensitive data is isolated.*
