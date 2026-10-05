@@ -1,0 +1,3 @@
+Use SPEC.md to create USER_STORIES.md
+
+Read SPEC.md. Inspect the local reference code in /ref to understand how the local model workflow is structured. Based on all these sources, generate a comprehensive USER_STORIES.md file. Break the project down into small, sequential phases starting with project initialization, then the Next.js Route Handlers, and finally UI integration. Every user story must include specific, testable acceptance criteria that strictly adhere to the privacy constraints and the Guatemala tech market context skills.
