@@ -70,11 +70,11 @@ This document outlines the sequential phases and user stories for the AI Cover L
 ### 8. Gemini Pro API Route Handler (Cover Letter Generation)
 **Description**: Create a Next.js Route Handler that leverages the Gemini Pro model to write the cover letter.
 **Acceptance Criteria**:
-- [ ] Route Handler orchestrates the final prompt using the sanitized JSON payload and (if applicable) Proxycurl data.
-- [ ] Uses the Google AI Studio `@google/genai` SDK.
-- [ ] **Privacy Constraint**: The prompt sent to Gemini *strictly excludes* the user's name and current income.
-- [ ] Instructs the model (prompt can be in English for better reasoning) to output the final cover letter in Spanish.
-- [ ] **Security**: Gemini API key is never exposed to the client.
+- [x] Route Handler orchestrates the final prompt using the sanitized JSON payload and (if applicable) Proxycurl data.
+- [x] Uses the Google AI Studio `@google/genai` SDK.
+- [x] **Privacy Constraint**: The prompt sent to Gemini *strictly excludes* the user's name and current income.
+- [x] Instructs the model (prompt can be in English for better reasoning) to output the final cover letter in Spanish.
+- [x] **Security**: Gemini API key is never exposed to the client.
 
 ## Phase 4: Integration & UI Polish
 
@@ -88,8 +88,8 @@ This document outlines the sequential phases and user stories for the AI Cover L
 ### 10. Display Final Cover Letter & Actions
 **Description**: Present the final generated cover letter to the user with finishing touches.
 **Acceptance Criteria**:
-- [ ] The cover letter from Gemini is displayed on the UI.
-- [ ] **Deanonymization/Signature**: If the user provided "Tu nombre", the client appends/signs the letter with the name locally.
-- [ ] Include a simple "Copy to Clipboard" button.
-- [ ] Include a button below the letter to generate another one (reset form/state).
-- [ ] The design is simple, modern, mobile-responsive, uses standard Tailwind CSS, and uses simple SVG icons (no emojis).
+- [x] The cover letter from Gemini is displayed on the UI.
+- [x] **Deanonymization/Signature**: If the user provided "Tu nombre", the client appends/signs the letter with the name locally.
+- [x] Include a simple "Copy to Clipboard" button.
+- [x] Include a button below the letter to generate another one (reset form/state).
+- [x] The design is simple, modern, mobile-responsive, uses standard Tailwind CSS, and uses simple SVG icons (no emojis).

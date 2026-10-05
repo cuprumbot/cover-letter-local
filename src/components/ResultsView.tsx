@@ -1,8 +1,10 @@
-import { ArrowLeft, CheckCircle, HelpCircle, FileText, TrendingUp, AlertCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, HelpCircle, FileText, TrendingUp, AlertCircle, Sparkles, Copy, RefreshCcw } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export interface ResultsData {
   formData: any;
   marketData: string[];
+  linkedinData?: any;
 }
 
 export function getAggregatedMarketRange(marketData: string[]): { min: number | null, max: number | null } {
@@ -137,7 +139,56 @@ export function getAggregatedMarketRange(marketData: string[]): { min: number | 
 }
 
 export default function ResultsView({ data, onDismiss }: { data: ResultsData, onDismiss: () => void }) {
-  const { formData, marketData } = data;
+  const { formData, marketData, linkedinData } = data;
+
+  const [coverLetter, setCoverLetter] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    const generateLetter = async () => {
+      try {
+        console.log("CLIENT: Requesting cover letter from /api/generate...");
+        const response = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jobTitle: formData.jobTitle,
+            company: formData.company,
+            experienceYears: formData.experienceYears,
+            aboutYou: formData.aboutYou,
+            jobOffer: formData.jobOffer,
+            linkedinData: linkedinData || null
+          }),
+        });
+        
+        const result = await response.json();
+        console.log("CLIENT: Received cover letter response:", result);
+        if (isMounted && result.success) {
+          let letter = result.letter;
+          if (formData.name) {
+            // Deanonymization/Signature
+            if (!letter.toLowerCase().includes("atentamente")) {
+              letter += `\n\nAtentamente,\n${formData.name}`;
+            } else {
+              letter += `\n${formData.name}`;
+            }
+          }
+          setCoverLetter(letter);
+        } else if (isMounted) {
+          setCoverLetter("Error generando la carta de presentación.");
+        }
+      } catch (error) {
+        console.error("CLIENT: Error calling /api/generate:", error);
+        if (isMounted) setCoverLetter("Error de conexión al generar la carta.");
+      } finally {
+        if (isMounted) setIsGenerating(false);
+      }
+    };
+
+    generateLetter();
+    return () => { isMounted = false; };
+  }, [formData, linkedinData]);
 
   const { min, max } = getAggregatedMarketRange(marketData);
 
@@ -372,17 +423,46 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
             </span>
           </h2>
           
-          <div className="flex-1 min-h-[400px] flex items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50 dark:bg-zinc-950/50 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900">
-            <div className="text-center flex flex-col items-center gap-3 text-zinc-400 dark:text-zinc-600 p-6">
-              <div className="p-4 bg-white dark:bg-zinc-900 rounded-full shadow-sm border border-zinc-100 dark:border-zinc-800">
-                <FileText className="w-8 h-8 text-emerald-400 opacity-80" />
+          {isGenerating ? (
+            <div className="flex-1 min-h-[400px] flex items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50 dark:bg-zinc-950/50 transition-colors">
+              <div className="text-center flex flex-col items-center gap-4 text-zinc-400 dark:text-zinc-600 p-6">
+                <div className="p-4 bg-white dark:bg-zinc-900 rounded-full shadow-sm border border-zinc-100 dark:border-zinc-800 animate-pulse">
+                  <Sparkles className="w-8 h-8 text-emerald-500 animate-spin-slow" />
+                </div>
+                <p className="font-semibold text-zinc-600 dark:text-zinc-400 mt-2 animate-pulse">
+                  Redactando con Inteligencia Artificial...
+                </p>
+                <p className="text-sm max-w-sm leading-relaxed text-zinc-500">
+                  Analizando la oferta de trabajo y tu perfil profesional para crear una carta altamente persuasiva.
+                </p>
               </div>
-              <p className="font-semibold text-zinc-600 dark:text-zinc-400 mt-2">La carta se generará aquí próximamente</p>
-              <p className="text-sm max-w-sm leading-relaxed">
-                Este espacio está reservado para mostrar la carta de presentación final.
-              </p>
             </div>
-          </div>
+          ) : (
+            <div className="flex flex-col gap-4 flex-1">
+              <div className="flex-1 p-6 bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 rounded-xl whitespace-pre-wrap text-zinc-800 dark:text-zinc-300 font-serif leading-relaxed text-sm md:text-base selection:bg-emerald-200 dark:selection:bg-emerald-900 shadow-inner">
+                {coverLetter || "No se pudo generar la carta."}
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-3 justify-end mt-2">
+                <button
+                  onClick={() => {
+                    if (coverLetter) navigator.clipboard.writeText(coverLetter);
+                  }}
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors shadow-sm"
+                >
+                  <Copy className="w-4 h-4" />
+                  Copiar al portapapeles
+                </button>
+                <button
+                  onClick={onDismiss}
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition-colors shadow-sm"
+                >
+                  <RefreshCcw className="w-4 h-4" />
+                  Generar otra carta
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>

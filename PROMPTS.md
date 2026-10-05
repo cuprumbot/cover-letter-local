@@ -150,3 +150,29 @@ Work autonomously end-to-end:
     Do not commit. I have to manually test the changes first.
 
 Only stop when User Story #7 is fully verified, then report what was done.
+
+---
+
+Execute User Story #8 from USER_STORIES.md.
+
+Adhere strictly to the rules in AGENTS.md and the requirements in SPEC.md. Run all necessary terminal commands to scaffold the project, set up the directory structure, install dependencies, and remove boilerplate code.
+
+Work autonomously end-to-end:
+
+    If a Linkedin URL was provided, add the relevant information from Enrich Layer to our prompt. Make sure no sensitive information goes in the prompt, so first remove the user name.
+
+    Prompt Gemini so it creates a cover letter. Send it structured information from the form such as job position, company, years of experience, about you, description of the job position. Remember that personal information such as name, current salary, expected salary should never be included in the prompt.
+
+    If a Linkedin URL was provided, add the relevant information from Enrich Layer to our prompt. Make sure no sensitive information goes in the prompt, so first remove the user name.
+
+    The information sent in the prompt should be well-structured.
+
+    The prompt might be in english if that improves results, but the cover letter must be in spanish.
+
+    Add prints to console to debug and verify which info is being sent to the backend.
+
+    Complete each step required by the story's acceptance criteria without asking for intermediate approvals.
+
+    Run npm run build to verify there are zero build or type errors. If you hit any errors, debug and resolve them independently.
+
+Only stop when User Story #5 is fully verified, then report what was done.
