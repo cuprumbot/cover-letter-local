@@ -43,10 +43,10 @@ This document outlines the sequential phases and user stories for the AI Cover L
 ### 5. Client-Side Sanitization & Payload Structuring
 **Description**: Implement the local orchestration step that prepares the data to be sent to the backend, strictly separating sensitive info.
 **Acceptance Criteria**:
-- [ ] When the user clicks "Generar", the client builds a JSON payload for the backend.
-- [ ] **Privacy Constraint**: The payload *must not* include the user's name, current income, or desired income.
-- [ ] The payload *can* include non-sensitive fields: job title, organization, years of experience, about, job offer details, location, and LinkedIn URL.
-- [ ] The client state retains the sensitive data (name, incomes) exclusively for local post-processing and comparison.
+- [x] When the user clicks "Generar", the client builds a JSON payload for the backend.
+- [x] **Privacy Constraint**: The payload *must not* include the user's name, current income, or desired income.
+- [x] The payload *can* include non-sensitive fields: job title, organization, years of experience, about, job offer details, location, and LinkedIn URL.
+- [x] The client state retains the sensitive data (name, incomes) exclusively for local post-processing and comparison.
 
 ## Phase 3: Server-side Orchestration (Route Handlers)
 *This phase handles external API integrations securely without leaking PII.*

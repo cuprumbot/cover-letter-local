@@ -72,7 +72,30 @@ export default function CoverLetterForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Generar clicked", formData);
+    
+    // Privacy Constraint: Sanitize the payload.
+    // Must NOT include name, currentSalary, or desiredSalary.
+    const safePayload = {
+      jobTitle: formData.jobTitle,
+      company: formData.company,
+      experienceYears: formData.experienceYears,
+      aboutYou: formData.aboutYou,
+      jobOffer: formData.jobOffer,
+      location: formData.location,
+      linkedin: formData.linkedin,
+    };
+
+    // Sensitive data remains strictly on the client
+    const sensitiveLocalData = {
+      name: formData.name,
+      currentSalary: formData.currentSalary,
+      desiredSalary: formData.desiredSalary,
+    };
+
+    console.log("--- START: Payload Verification ---");
+    console.log("📡 Payload sent to the backend (SAFE):", safePayload);
+    console.log("🔒 Data kept ONLY locally (SENSITIVE):", sensitiveLocalData);
+    console.log("--- END: Payload Verification ---");
   };
 
   return (
