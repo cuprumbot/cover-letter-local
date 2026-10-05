@@ -21,32 +21,7 @@ export async function POST(request: Request) {
 
     let serperData = null;
 
-    // --- TEMPORARY CHEAT FOR LOCAL MODEL DEBUGGING (TODO: REMOVE LATER) ---
-    if (payload.company && payload.company.toLowerCase().includes("telus")) {
-      console.log("Using hardcoded Telus data to save Serper credits.");
-      return NextResponse.json({
-        success: true,
-        message: "Payload received securely",
-        serperData: [
-          {
-            title: "TELUS Digital Salaries in Guatemala City",
-            snippet: "Full Stack Developer. 6 Salaries submitted. GTQ 20K - GTQ 27K /mo. Fullstack ... The average TELUS Digital salary in Guatemala City can vary greatly by role.",
-            link: "https://www.glassdoor.com/Salary/TELUS-Digital-Guatemala-City-Salaries-EI_IE2841163.0,13_IL.14,28_IC4358305.htm"
-          },
-          {
-            title: "TELUS Digital Full Stack Developer Salaries ...",
-            snippet: "The salary starts at $120,414 per year (estimate) The estimated average salary for a Full Stack Developer at TELUS Digital is $118,929 per year ...",
-            link: "https://www.glassdoor.com/Salary/TELUS-Digital-Full-Stack-Developer-Salaries-E2841163_D_KO14,34.htm"
-          },
-          {
-            title: "TELUS Digital Salaries in Guatemala City",
-            snippet: "Full Stack Developer. 6 Salaries submitted. GTQ 240K - GTQ 323K /yr. Fullstack ... The average TELUS Digital salary in Guatemala City can vary greatly by role.",
-            link: "https://www.glassdoor.com/Salary/TELUS-Digital-Guatemala-City-Salaries-EI_IE2841163.0,13_IL.14,28_IC4358305.htm?payPeriod=ANNUAL"
-          }
-        ]
-      });
-    }
-    // --- END TEMPORARY CHEAT ---
+
 
     try {
       if (process.env.SERPER_API_KEY) {

@@ -10,48 +10,95 @@ export function getAggregatedMarketRange(marketData: string[]): { min: number | 
   console.log("Raw marketData received:", marketData);
   const allValues: number[] = [];
 
+  // Regex to capture: [Currency?] [Amount] [K?] [Period?]
+  // Group 1: Currency ($, €, USD, EUR, GTQ, Q)
+  // Group 2: Amount (digits and commas/dots)
+  // Group 3: K modifier (k or K)
+  // Group 4: Period (mo, month, mes, yr, year, año, anual, annual)
+  const regex = /(?:([$€]|USD|EUR|GTQ|Q)\s*)?([\d.,]+)([kK]?)(?:\s*(?:\/|per|por|a\s+un|al)\s*(mo|month|mes|yr|year|año|anual|annual))?/gi;
+
   marketData.forEach((str, index) => {
     console.log(`\n--- Parsing snippet [${index}]: "${str}" ---`);
-    const isYearly = /yr|year|año|anual|annual/i.test(str);
     
-    let multiplier = 1;
-    if (/\$|usd/i.test(str)) multiplier = 7.8;
-    if (/€|eur|euro/i.test(str)) multiplier = 8.6;
+    const snippetHasYearly = /yr|year|año|anual|annual/i.test(str);
+    const snippetHasMonthly = /mo|month|mes/i.test(str);
+    
+    // Default fallback multipliers for the snippet if no currency is attached to the number
+    let snippetMultiplier = 1;
+    if (/\$|usd/i.test(str)) snippetMultiplier = 7.8;
+    else if (/€|eur|euro/i.test(str)) snippetMultiplier = 8.6;
 
-    console.log(`Context flags -> isYearly: ${isYearly}, multiplier: ${multiplier}`);
+    console.log(`Snippet Context -> hasYearly: ${snippetHasYearly}, hasMonthly: ${snippetHasMonthly}, fallbackMultiplier: ${snippetMultiplier}`);
 
-    const matches = str.match(/[\d.,]+[kK]?/g);
-    if (matches) {
-      console.log("Regex matches found:", matches);
-      matches.forEach(match => {
-        let cleanNum = match.replace(/,/g, '');
-        let isK = false;
-        if (/k/i.test(cleanNum)) {
-          isK = true;
-          cleanNum = cleanNum.replace(/k/i, '');
-        }
-        
-        let value = parseFloat(cleanNum);
-        if (isNaN(value)) {
-          console.log(`Skipping "${match}" - NaN after cleaning`);
-          return;
-        }
-        
-        let originalValue = value;
-        if (isK) value *= 1000;
-        
-        if (value < 100) {
-          console.log(`Skipping "${match}" (value: ${value}) - below 100 threshold`);
-          return;
-        }
-        
-        value *= multiplier;
-        if (isYearly) value /= 12;
+    let match;
+    let foundAny = false;
+    while ((match = regex.exec(str)) !== null) {
+      foundAny = true;
+      const currStr = match[1];
+      const numStr = match[2];
+      const kStr = match[3];
+      const perStr = match[4];
 
-        console.log(`Match "${match}" -> Base: ${originalValue}${isK ? 'k' : ''} -> After multipliers/yearly adjustment -> Calculated: Q${value.toFixed(2)} / month`);
-        allValues.push(value);
-      });
-    } else {
+      if (numStr === '.' || numStr === ',') {
+        console.log(`Skipping "${match[0]}" - Just punctuation`);
+        continue;
+      }
+
+      let cleanNum = numStr.replace(/,/g, '');
+      let value = parseFloat(cleanNum);
+      if (isNaN(value)) {
+        console.log(`Skipping "${match[0]}" - NaN after cleaning`);
+        continue;
+      }
+      
+      let originalValue = value;
+      if (kStr && /k/i.test(kStr)) {
+        value *= 1000;
+      }
+      
+      if (value < 100) {
+        console.log(`Skipping "${match[0]}" (value: ${value}) - below 100 threshold`);
+        continue;
+      }
+
+      // 1. Determine Multiplier
+      let multiplier = snippetMultiplier;
+      if (currStr) {
+        if (/[$]|usd/i.test(currStr)) multiplier = 7.8;
+        else if (/€|eur|euro/i.test(currStr)) multiplier = 8.6;
+        else if (/GTQ|Q/i.test(currStr)) multiplier = 1;
+      }
+
+      // 2. Determine Period
+      let isYearly = false;
+      if (perStr) {
+        if (/yr|year|año|anual|annual/i.test(perStr)) isYearly = true;
+      } else {
+        // Fallback logic
+        if (snippetHasYearly && !snippetHasMonthly) {
+          isYearly = true;
+        } else if (snippetHasMonthly && !snippetHasYearly) {
+          isYearly = false;
+        } else {
+          // Mixed or neither. Guess based on magnitude.
+          if (currStr && /[$]|usd/i.test(currStr)) {
+            // USD values > 10,000 are usually yearly
+            if (originalValue > 10000) isYearly = true;
+          } else {
+            // GTQ values > 100,000 are usually yearly
+            if (value * multiplier > 100000) isYearly = true;
+          }
+        }
+      }
+      
+      value *= multiplier;
+      if (isYearly) value /= 12;
+
+      console.log(`Match "${match[0]}" -> Base: ${originalValue}${kStr || ''} -> Currency: ${currStr || 'fallback'}, Period: ${perStr || 'fallback'} -> isYearly: ${isYearly} -> Calculated: Q${value.toFixed(2)} / month`);
+      allValues.push(value);
+    }
+    
+    if (!foundAny) {
       console.log("No numbers matched in this snippet.");
     }
   });

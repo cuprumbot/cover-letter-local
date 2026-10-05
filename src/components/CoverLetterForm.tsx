@@ -47,14 +47,14 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
     },
     {
       jobTitle: "Desarrollador Frontend",
-      company: "Cervecería Ambev Guatemala",
+      company: "Tigo Guatemala",
       experienceYears: "2",
       currentSalary: "12000",
       desiredSalary: "16000",
       name: "Luis Castillo",
       linkedin: "https://linkedin.com/in/lcastillo-front",
       aboutYou: "Especialista en React y Tailwind CSS, enfocado en accesibilidad y diseño responsivo con experiencia en metodologías ágiles.",
-      jobOffer: "Posición para desarrollador Frontend enfocado en e-commerce. Experiencia con Next.js y Vercel es altamente valorada.",
+      jobOffer: "Posición para desarrollador Frontend. Experiencia con Next.js y Vercel es altamente valorada.",
       location: "Guatemala",
     }
   ];

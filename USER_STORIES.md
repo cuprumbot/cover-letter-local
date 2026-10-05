@@ -80,9 +80,9 @@ This document outlines the sequential phases and user stories for the AI Cover L
 ### 9. Salary Expectation Summary (Local Comparison)
 **Description**: Compare the user's local income data against the Serper results and display a localized summary.
 **Acceptance Criteria**:
-- [ ] The frontend receives the salary range from the Serper Route Handler as soon as it's available.
-- [ ] **Privacy Constraint**: The client-side (traditional code/regex) compares the locally held "Salario deseado" and "Salario actual" against the fetched range.
-- [ ] Displays a short summary in Spanish assessing if the expectation is realistic, along with interview negotiation tips.
+- [x] The frontend receives the salary range from the Serper Route Handler as soon as it's available.
+- [x] **Privacy Constraint**: The client-side (traditional code/regex) compares the locally held "Salario deseado" and "Salario actual" against the fetched range.
+- [x] Displays a short summary in Spanish assessing if the expectation is realistic, along with interview negotiation tips.
 
 ### 10. Display Final Cover Letter & Actions
 **Description**: Present the final generated cover letter to the user with finishing touches.
