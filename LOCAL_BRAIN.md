@@ -51,4 +51,41 @@ When iterating over all regex matches within a snippet, the algorithm applies th
   - `value = value * multiplier`
   - `if (isYearly) value = value / 12`
 
-This yields normalized monthly Quetzales (GTQ) amounts, which are then aggregated to find the min and max range.
+### 5. Aggregation & Priority Filtering
+Because Glassdoor data sometimes mixes converted USD approximations with exact GTQ local data (and USD ranges often skew higher or lower than true local ranges), the algorithm places the parsed values into separate buckets based on their origin:
+- `gtqValues`
+- `usdValues`
+- `otherValues`
+
+**Filtering Logic:**
+1. If we find *any* explicit `gtqValues` (length $\ge$ 1), the algorithm will **discard** all USD/Other data and form the range exclusively using the pure GTQ local data.
+2. If no GTQ data is found, it falls back to the calculated `usdValues`.
+3. If neither is found, it falls back to `otherValues` (like EUR).
+
+This yields the final, most accurate normalized monthly Quetzales (GTQ) amounts, which are then aggregated to find the min and max range.
+
+## Negotiation Logic & Private Note
+Once the final range is established (or if no range could be formed), the `ResultsView` calculates the user's position relative to this range to provide a private "Nota Privada de Negociación". This note provides actionable advice on when and how to mention their desired salary during interviews.
+
+Here is the logic matrix used:
+
+| Condición (Ubicación en el Rango) | Análisis (¿Expectativa realista?) | Tip de Negociación (Nota Privada) |
+| :--- | :--- | :--- |
+| **Muy por debajo**<br>`deseado < min * 0.8` | Expectativa muy por debajo del mínimo que suele pagar la empresa. *(Realista pero perjudicial)* | No menciones el salario hasta que te pregunten. Podrías estar dejando dinero en la mesa; pide al menos el mínimo del rango. |
+| **Por debajo + Gran Aumento**<br>`deseado < min` &<br>`aumento >= 30%` | Por debajo de la empresa, pero representa un excelente aumento (+X%) para ti. *(Realista)* | Eres un candidato muy atractivo económicamente. Puedes dar tu número temprano; es probable que lo acepten rápido y tú ganas un gran aumento. |
+| **Por debajo**<br>`deseado < min` &<br>`aumento < 30%` | Tu expectativa es modesta y está por debajo del rango de la empresa. *(Realista)* | Esto podría acelerar tu contratación. No te adelantes a dar un número; deja que ellos hagan la primera oferta, ¡podrían ofrecerte más! |
+| **Parte Baja**<br>`min <= deseado < min + (span/3)` | Expectativa realista. Te sitúas en la parte baja del rango de la empresa. *(Realista)* | Tienes una posición segura. Si preguntan, da este número con confianza desde la primera entrevista. |
+| **Parte Media**<br>`min+(span/3) <= deseado <= max-(span/3)` | Expectativa muy realista, justo en el promedio de lo que paga la empresa. *(Realista)* | Es un excelente punto medio. Da este número cuando pregunten, demostrando que conoces el valor del rol en la empresa. |
+| **Parte Alta**<br>`max-(span/3) < deseado <= max` | Expectativa realista pero en la parte alta del rango de la empresa. *(Realista)* | Muestra tu valor primero. Espera a la segunda entrevista o cuando estén claramente interesados en ti antes de hablar de números. |
+| **Ligeramente por encima**<br>`max < deseado <= max * 1.2` | Tu expectativa supera levemente el límite máximo detectado para la empresa. *(Poco realista)* | No menciones el salario inicial. Enamóralos con tu experiencia primero; deberás justificar por qué aportas más valor que un candidato promedio. |
+| **Muy por encima**<br>`deseado > max * 1.2` | Expectativa poco realista. Está significativamente por encima de lo que la empresa suele pagar. *(Poco realista)* | Sé muy cauteloso. Considera negociar beneficios (bonos, vacaciones) si no llegan a tu número. Deja el salario para la etapa final. |
+
+*(Nota: `span` se refiere a la diferencia entre el máximo y el mínimo: `max - min`)*
+
+### Fallback (Sin datos suficientes)
+Si el algoritmo no logra extraer un rango válido de Glassdoor, se evalúa únicamente el incremento porcentual respecto a su salario actual:
+
+| Condición | Análisis | Tip de Negociación |
+| :--- | :--- | :--- |
+| **Aumento $\le$ 20%** | Sin datos de la empresa, pero el incremento del X% es razonable. *(Realista)* | Puedes mencionar tu expectativa con tranquilidad, es un salto natural en tu carrera. |
+| **Aumento > 20%** | Sin datos de la empresa, y el incremento del X% es ambicioso. *(Poco realista)* | Evita dar un número primero. Espera a entender bien las responsabilidades y demuestra tu experiencia para justificar este salto salarial. |

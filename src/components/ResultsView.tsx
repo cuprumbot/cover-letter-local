@@ -8,13 +8,12 @@ export interface ResultsData {
 export function getAggregatedMarketRange(marketData: string[]): { min: number | null, max: number | null } {
   console.log("--- DEBUG: getAggregatedMarketRange START ---");
   console.log("Raw marketData received:", marketData);
-  const allValues: number[] = [];
+  
+  const gtqValues: number[] = [];
+  const usdValues: number[] = [];
+  const otherValues: number[] = [];
 
   // Regex to capture: [Currency?] [Amount] [K?] [Period?]
-  // Group 1: Currency ($, €, USD, EUR, GTQ, Q)
-  // Group 2: Amount (digits and commas/dots)
-  // Group 3: K modifier (k or K)
-  // Group 4: Period (mo, month, mes, yr, year, año, anual, annual)
   const regex = /(?:([$€]|USD|EUR|GTQ|Q)\s*)?([\d.,]+)([kK]?)(?:\s*(?:\/|per|por|a\s+un|al)\s*(mo|month|mes|yr|year|año|anual|annual))?/gi;
 
   marketData.forEach((str, index) => {
@@ -23,12 +22,17 @@ export function getAggregatedMarketRange(marketData: string[]): { min: number | 
     const snippetHasYearly = /yr|year|año|anual|annual/i.test(str);
     const snippetHasMonthly = /mo|month|mes/i.test(str);
     
-    // Default fallback multipliers for the snippet if no currency is attached to the number
     let snippetMultiplier = 1;
-    if (/\$|usd/i.test(str)) snippetMultiplier = 7.8;
-    else if (/€|eur|euro/i.test(str)) snippetMultiplier = 8.6;
+    let snippetCurrencyType = "GTQ/Unknown";
+    if (/\$|usd/i.test(str)) {
+      snippetMultiplier = 7.8;
+      snippetCurrencyType = "USD";
+    } else if (/€|eur|euro/i.test(str)) {
+      snippetMultiplier = 8.6;
+      snippetCurrencyType = "EUR";
+    }
 
-    console.log(`Snippet Context -> hasYearly: ${snippetHasYearly}, hasMonthly: ${snippetHasMonthly}, fallbackMultiplier: ${snippetMultiplier}`);
+    console.log(`Snippet Context -> hasYearly: ${snippetHasYearly}, hasMonthly: ${snippetHasMonthly}, fallbackMultiplier: ${snippetMultiplier} (${snippetCurrencyType})`);
 
     let match;
     let foundAny = false;
@@ -39,34 +43,31 @@ export function getAggregatedMarketRange(marketData: string[]): { min: number | 
       const kStr = match[3];
       const perStr = match[4];
 
-      if (numStr === '.' || numStr === ',') {
-        console.log(`Skipping "${match[0]}" - Just punctuation`);
-        continue;
-      }
+      if (numStr === '.' || numStr === ',') continue;
 
       let cleanNum = numStr.replace(/,/g, '');
       let value = parseFloat(cleanNum);
-      if (isNaN(value)) {
-        console.log(`Skipping "${match[0]}" - NaN after cleaning`);
-        continue;
-      }
+      if (isNaN(value)) continue;
       
       let originalValue = value;
-      if (kStr && /k/i.test(kStr)) {
-        value *= 1000;
-      }
-      
-      if (value < 100) {
-        console.log(`Skipping "${match[0]}" (value: ${value}) - below 100 threshold`);
-        continue;
-      }
+      if (kStr && /k/i.test(kStr)) value *= 1000;
+      if (value < 100) continue;
 
-      // 1. Determine Multiplier
+      // 1. Determine Multiplier & Currency Type
       let multiplier = snippetMultiplier;
+      let currencyType = snippetCurrencyType;
+      
       if (currStr) {
-        if (/[$]|usd/i.test(currStr)) multiplier = 7.8;
-        else if (/€|eur|euro/i.test(currStr)) multiplier = 8.6;
-        else if (/GTQ|Q/i.test(currStr)) multiplier = 1;
+        if (/[$]|usd/i.test(currStr)) {
+          multiplier = 7.8;
+          currencyType = "USD";
+        } else if (/€|eur|euro/i.test(currStr)) {
+          multiplier = 8.6;
+          currencyType = "EUR";
+        } else if (/GTQ|Q/i.test(currStr)) {
+          multiplier = 1;
+          currencyType = "GTQ";
+        }
       }
 
       // 2. Determine Period
@@ -74,46 +75,62 @@ export function getAggregatedMarketRange(marketData: string[]): { min: number | 
       if (perStr) {
         if (/yr|year|año|anual|annual/i.test(perStr)) isYearly = true;
       } else {
-        // Fallback logic
         if (snippetHasYearly && !snippetHasMonthly) {
           isYearly = true;
         } else if (snippetHasMonthly && !snippetHasYearly) {
           isYearly = false;
         } else {
-          // Mixed or neither. Guess based on magnitude.
-          if (currStr && /[$]|usd/i.test(currStr)) {
-            // USD values > 10,000 are usually yearly
-            if (originalValue > 10000) isYearly = true;
-          } else {
-            // GTQ values > 100,000 are usually yearly
-            if (value * multiplier > 100000) isYearly = true;
-          }
+          if (currencyType === "USD" && originalValue > 10000) isYearly = true;
+          else if (currencyType === "GTQ" && value * multiplier > 100000) isYearly = true;
         }
       }
       
       value *= multiplier;
       if (isYearly) value /= 12;
+      const finalMonthlyGTQ = value;
 
-      console.log(`Match "${match[0]}" -> Base: ${originalValue}${kStr || ''} -> Currency: ${currStr || 'fallback'}, Period: ${perStr || 'fallback'} -> isYearly: ${isYearly} -> Calculated: Q${value.toFixed(2)} / month`);
-      allValues.push(value);
+      console.log(`Match "${match[0]}" -> Origin: ${currencyType} -> isYearly: ${isYearly} -> Calculated: Q${finalMonthlyGTQ.toFixed(2)} / month`);
+      
+      if (currencyType === "GTQ") {
+        gtqValues.push(finalMonthlyGTQ);
+      } else if (currencyType === "USD") {
+        usdValues.push(finalMonthlyGTQ);
+      } else {
+        otherValues.push(finalMonthlyGTQ);
+      }
     }
     
-    if (!foundAny) {
-      console.log("No numbers matched in this snippet.");
-    }
+    if (!foundAny) console.log("No numbers matched in this snippet.");
   });
 
-  console.log("\nAll extracted valid values:", allValues);
+  console.log("\n--- AGGREGATION & FILTERING ---");
+  console.log("Values originally GTQ:", gtqValues);
+  console.log("Values calculated from USD:", usdValues);
+  console.log("Values calculated from EUR/Other:", otherValues);
 
-  if (allValues.length === 0) {
-    console.log("--- DEBUG END: No values found, returning null ---");
+  let finalValuesToUse: number[] = [];
+
+  // Prioritize GTQ values if we have enough to form a meaningful datapoint
+  if (gtqValues.length >= 1) {
+    console.log("🟢 Using ONLY GTQ values (discarding USD/Other) because we found explicit local data.");
+    finalValuesToUse = gtqValues;
+  } else if (usdValues.length >= 1) {
+    console.log("🟡 No GTQ values found. Falling back to calculated USD values.");
+    finalValuesToUse = usdValues;
+  } else if (otherValues.length >= 1) {
+    console.log("🟠 No GTQ or USD values found. Falling back to Other/EUR values.");
+    finalValuesToUse = otherValues;
+  }
+
+  if (finalValuesToUse.length === 0) {
+    console.log("--- DEBUG END: No valid values found, returning null ---");
     return { min: null, max: null };
   }
   
-  const min = Math.round(Math.min(...allValues));
-  const max = Math.round(Math.max(...allValues));
+  const min = Math.round(Math.min(...finalValuesToUse));
+  const max = Math.round(Math.max(...finalValuesToUse));
 
-  console.log(`Final Range -> Min: Q${min}, Max: Q${max}`);
+  console.log(`✅ Final Selected Range -> Min: Q${min}, Max: Q${max}`);
   console.log("--- DEBUG: getAggregatedMarketRange END ---");
 
   return { min, max };
@@ -140,26 +157,54 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
   let scaleMax = 100;
   const hasChart = min !== null && max !== null;
 
+  // Evaluate Negotiation Logic
   let isRealistic = false;
   let isUnrealistic = false;
   let analysis = "";
+  let negotiationTip = "";
 
   if (hasChart) {
     marketRangeStr = min === max ? `Q${min!.toLocaleString()}` : `Q${min!.toLocaleString()} - Q${max!.toLocaleString()}`;
     
     if (desired >= min! && desired <= max!) {
       isWithinRange = true;
-      rangeStatusStr = "Dentro del rango del mercado";
+      rangeStatusStr = "Dentro del rango de la empresa";
       isRealistic = true;
-      analysis = "El salario deseado se encuentra dentro del rango del mercado local según los datos de Glassdoor.";
     } else if (desired > max!) {
-      rangeStatusStr = "Por encima del mercado";
+      rangeStatusStr = "Por encima de la empresa";
       isUnrealistic = true;
-      analysis = "El salario deseado supera el rango máximo encontrado en el mercado local.";
     } else {
-      rangeStatusStr = "Por debajo del mercado";
+      rangeStatusStr = "Por debajo de la empresa";
       isRealistic = true;
-      analysis = "El salario deseado está por debajo del rango del mercado, lo cual podría acelerar tu contratación.";
+    }
+
+    const rangeSpan = max! - min!;
+    
+    // Detailed Negotiation Matrix
+    if (desired < min! * 0.8) {
+      analysis = "Expectativa muy por debajo del mínimo que suele pagar la empresa.";
+      negotiationTip = "No menciones el salario hasta que te pregunten. Podrías estar dejando dinero en la mesa; pide al menos el mínimo del rango.";
+    } else if (desired < min! && increasePercent >= 30) {
+      analysis = `Por debajo de la empresa, pero representa un excelente aumento (+${increasePercent}%) para ti.`;
+      negotiationTip = "Eres un candidato muy atractivo económicamente. Puedes dar tu número temprano; es probable que lo acepten rápido y tú ganas un gran aumento.";
+    } else if (desired < min!) {
+      analysis = "Tu expectativa es modesta y está por debajo del rango de la empresa.";
+      negotiationTip = "Esto podría acelerar tu contratación. No te adelantes a dar un número; deja que ellos hagan la primera oferta, ¡podrían ofrecerte más!";
+    } else if (desired >= min! && desired < min! + (rangeSpan / 3)) {
+      analysis = "Expectativa realista. Te sitúas en la parte baja del rango de la empresa.";
+      negotiationTip = "Tienes una posición segura. Si preguntan, da este número con confianza desde la primera entrevista.";
+    } else if (desired >= min! + (rangeSpan / 3) && desired <= max! - (rangeSpan / 3)) {
+      analysis = "Expectativa muy realista, justo en el promedio de lo que paga la empresa.";
+      negotiationTip = "Es un excelente punto medio. Da este número cuando pregunten, demostrando que conoces el valor del rol en la empresa.";
+    } else if (desired > max! - (rangeSpan / 3) && desired <= max!) {
+      analysis = "Expectativa realista pero en la parte alta del rango de la empresa.";
+      negotiationTip = "Muestra tu valor primero. Espera a la segunda entrevista o cuando estén claramente interesados en ti antes de hablar de números.";
+    } else if (desired > max! && desired <= max! * 1.2) {
+      analysis = "Tu expectativa supera levemente el límite máximo detectado para la empresa.";
+      negotiationTip = "No menciones el salario inicial. Enamóralos con tu experiencia primero; deberás justificar por qué aportas más valor que un candidato promedio.";
+    } else {
+      analysis = "Expectativa poco realista. Está significativamente por encima de lo que la empresa suele pagar.";
+      negotiationTip = "Sé muy cauteloso. Considera negociar beneficios (bonos, vacaciones) si no llegan a tu número. Deja el salario para la etapa final.";
     }
 
     const lowerBound = Math.min(min!, desired, current);
@@ -168,13 +213,14 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
     scaleMin = Math.max(0, lowerBound - padding);
     scaleMax = upperBound + padding;
   } else {
-    // If it is not possible to calculate a range...
     if (increasePercent <= 20) {
       isRealistic = true;
-      analysis = "No se encontraron datos concluyentes en Glassdoor, pero el incremento solicitado es menor o igual al 20%, lo cual se considera realista.";
+      analysis = `Sin datos de la empresa, pero el incremento del ${increasePercent}% es razonable.`;
+      negotiationTip = "Puedes mencionar tu expectativa con tranquilidad, es un salto natural en tu carrera.";
     } else {
       isUnrealistic = true;
-      analysis = `No se encontraron datos concluyentes en Glassdoor. Un incremento del ${increasePercent}% podría ser difícil de justificar sin un cambio significativo de responsabilidades.`;
+      analysis = `Sin datos de la empresa, y el incremento del ${increasePercent}% es ambicioso.`;
+      negotiationTip = "Evita dar un número primero. Espera a entender bien las responsabilidades y demuestra tu experiencia para justificar este salto salarial.";
     }
   }
 
@@ -236,7 +282,7 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
             
             <div className="flex flex-col gap-3 bg-white/60 dark:bg-black/20 p-4 rounded-xl border border-white dark:border-white/5 mt-1">
               <div className="flex justify-between items-center">
-                <span className="text-xs uppercase tracking-wider font-bold text-zinc-500 dark:text-zinc-400">Promedio del Mercado</span>
+                <span className="text-xs uppercase tracking-wider font-bold text-zinc-500 dark:text-zinc-400">Promedio de la empresa</span>
                 <span className="font-bold text-zinc-800 dark:text-zinc-200 text-sm">{marketRangeStr}</span>
               </div>
               
@@ -278,28 +324,41 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
             </div>
           </div>
 
-          <div className="mt-4 p-4 bg-white/80 dark:bg-black/40 rounded-xl border border-white dark:border-zinc-800 shadow-sm z-10">
-            <div className="flex items-center gap-3 mb-3">
-              {isRealistic ? (
-                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                </div>
-              ) : isUnrealistic ? (
-                <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
-                  <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                </div>
-              ) : (
-                <div className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-full">
-                  <HelpCircle className="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
-                </div>
-              )}
-              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
-                ¿Expectativa realista? <span className={isRealistic ? "text-green-600 dark:text-green-400 font-bold" : isUnrealistic ? "text-orange-600 dark:text-orange-400 font-bold" : "text-zinc-600 font-bold"}>{isRealistic ? "Sí" : isUnrealistic ? "No" : "Desconocido"}</span>
-              </h3>
+          <div className="mt-2 p-4 bg-white/80 dark:bg-black/40 rounded-xl border border-white dark:border-zinc-800 shadow-sm z-10 flex flex-col gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                {isRealistic ? (
+                  <div className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-full">
+                    <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  </div>
+                ) : isUnrealistic ? (
+                  <div className="p-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-full">
+                    <AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                  </div>
+                ) : (
+                  <div className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full">
+                    <HelpCircle className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
+                  </div>
+                )}
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                  ¿Expectativa realista? <span className={isRealistic ? "text-green-600 dark:text-green-400" : isUnrealistic ? "text-orange-600 dark:text-orange-400" : "text-zinc-600"}>{isRealistic ? "Sí" : isUnrealistic ? "No" : "Desconocido"}</span>
+                </h3>
+              </div>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed ml-9">
+                {analysis}
+              </p>
             </div>
-            <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed italic border-l-2 border-emerald-300 dark:border-emerald-700 pl-3 bg-emerald-50/50 dark:bg-emerald-900/10 py-1 rounded-r-md">
-              "{analysis}"
-            </p>
+
+            <div className="border-t border-emerald-100 dark:border-emerald-900/30 pt-3">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded">
+                  Nota Privada de Negociación
+                </span>
+              </div>
+              <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed italic border-l-2 border-emerald-300 dark:border-emerald-700 pl-3 py-1">
+                {negotiationTip}
+              </p>
+            </div>
           </div>
         </div>
 

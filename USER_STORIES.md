@@ -39,6 +39,7 @@ This document outlines the sequential phases and user stories for the AI Cover L
 - [x] Data reflects the Guatemala tech market (e.g., Job Titles like "Desarrollador Full Stack", "Ingeniero de Datos").
 - [x] Uses real, non-generic local companies (e.g., "Telus", "Banco Industrial").
 - [x] Salary samples reflect realistic local ranges in GTQ (Quetzales).
+- *Note (Pending Improvement)*: The sample data companies/roles need to be refined, as some combinations are returning weird values or incomplete data from Glassdoor/Serper.
 
 ### 5. Client-Side Sanitization & Payload Structuring
 **Description**: Implement the local orchestration step that prepares the data to be sent to the backend, strictly separating sensitive info.
