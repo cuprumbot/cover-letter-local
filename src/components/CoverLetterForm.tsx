@@ -70,7 +70,9 @@ export default function CoverLetterForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Privacy Constraint: Sanitize the payload.
@@ -93,9 +95,26 @@ export default function CoverLetterForm() {
     };
 
     console.log("--- START: Payload Verification ---");
-    console.log("📡 Payload sent to the backend (SAFE):", safePayload);
-    console.log("🔒 Data kept ONLY locally (SENSITIVE):", sensitiveLocalData);
+    console.log("📡 CLIENT: Sending safe payload to backend:", safePayload);
+    console.log("🔒 CLIENT: Data kept ONLY locally:", sensitiveLocalData);
     console.log("--- END: Payload Verification ---");
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/salary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(safePayload),
+      });
+
+      const data = await response.json();
+      console.log("📥 CLIENT: Received response from backend:", data);
+      
+    } catch (error) {
+      console.error("❌ CLIENT: Error calling backend:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -352,12 +371,13 @@ export default function CoverLetterForm() {
         <div className="pt-4 space-y-4">
           <button
             type="submit"
-            className="w-full relative group overflow-hidden rounded-xl bg-zinc-900 dark:bg-white px-8 py-4 text-white dark:text-zinc-900 font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+            disabled={isLoading}
+            className={`w-full relative group overflow-hidden rounded-xl bg-zinc-900 dark:bg-white px-8 py-4 text-white dark:text-zinc-900 font-medium transition-all duration-300 shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98] hover:shadow-xl'}`}
           >
-            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-emerald-500 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            {!isLoading && <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-emerald-500 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />}
             <div className="relative flex items-center justify-center gap-2">
-              <Sparkles size={20} className="group-hover:animate-pulse" />
-              <span>Generar</span>
+              <Sparkles size={20} className={isLoading ? "animate-spin" : "group-hover:animate-pulse"} />
+              <span>{isLoading ? "Generando..." : "Generar"}</span>
             </div>
           </button>
           

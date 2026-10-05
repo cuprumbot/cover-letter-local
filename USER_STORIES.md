@@ -54,10 +54,10 @@ This document outlines the sequential phases and user stories for the AI Cover L
 ### 6. Serper API Route Handler (Salary Context)
 **Description**: Create a Next.js Route Handler to fetch salary context from Glassdoor using the Serper API.
 **Acceptance Criteria**:
-- [ ] Route Handler receives only the non-sensitive job title and organization.
-- [ ] Securely fetches data using a server-side Serper API key.
-- [ ] Extracts salary ranges for similar positions.
-- [ ] **Security**: Serper API key is never exposed to the client.
+- [x] Route Handler receives only the non-sensitive job title and organization.
+- [x] Securely fetches data using a server-side Serper API key.
+- [x] Extracts salary ranges for similar positions.
+- [x] **Security**: Serper API key is never exposed to the client.
 
 ### 7. Proxycurl API Route Handler (LinkedIn History)
 **Description**: Create a Next.js Route Handler to extract work history from a LinkedIn profile.
