@@ -27,9 +27,9 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
       experienceYears: "4",
       currentSalary: "18000",
       desiredSalary: "22000",
-      name: "Carlos Mendoza",
-      linkedin: "https://linkedin.com/in/carlosmendoza-gt",
-      aboutYou: "Desarrollador Full Stack con experiencia en React y Node.js. Apasionado por crear interfaces rápidas y escalables.",
+      name: "Christian Brolo",
+      linkedin: "https://www.linkedin.com/in/christian-andres-brolo-torre-2b93ab112/",
+      aboutYou: "QA Test Engineer. Apasionado por crear interfaces rápidas y escalables.",
       jobOffer: "Buscamos un desarrollador Full Stack con 3+ años de experiencia. Conocimientos en AWS y bases de datos NoSQL son un plus.",
       location: "Ciudad de Guatemala",
     },
@@ -40,7 +40,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
       currentSalary: "20000",
       desiredSalary: "25000",
       name: "Ana Sofía Barrios",
-      linkedin: "https://linkedin.com/in/anabarrios-data",
+      linkedin: "https://www.linkedin.com/in/sundarpichai",
       aboutYou: "Ingeniera de datos especializada en pipelines ETL con Python y Spark. Experiencia optimizando consultas complejas.",
       jobOffer: "Se requiere Ingeniero de Datos senior para liderar la migración hacia arquitecturas basadas en nube. Fuertes habilidades en SQL y Big Data.",
       location: "Guatemala",
@@ -52,7 +52,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
       currentSalary: "12000",
       desiredSalary: "16000",
       name: "Luis Castillo",
-      linkedin: "https://linkedin.com/in/lcastillo-front",
+      linkedin: "https://www.linkedin.com/in/satyanadella",
       aboutYou: "Especialista en React y Tailwind CSS, enfocado en accesibilidad y diseño responsivo con experiencia en metodologías ágiles.",
       jobOffer: "Posición para desarrollador Frontend. Experiencia con Next.js y Vercel es altamente valorada.",
       location: "Guatemala",
@@ -74,7 +74,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Privacy Constraint: Sanitize the payload.
     // Must NOT include name, currentSalary, or desiredSalary.
     const safePayload = {
@@ -101,25 +101,47 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
 
     setIsLoading(true);
     try {
-      const response = await fetch("/api/salary", {
+      // 1. Fetch Salary Context
+      const salaryPromise = fetch("/api/salary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(safePayload),
       });
 
-      const data = await response.json();
-      console.log("📥 CLIENT: Received response from backend:", data);
+      // 2. Fetch LinkedIn Profile (if provided)
+      let linkedinPromise: Promise<Response | null> = Promise.resolve(null);
+      if (safePayload.linkedin) {
+        console.log("🔗 CLIENT: LinkedIn URL detected. Fetching data from /api/linkedin...", { linkedin: safePayload.linkedin });
+        linkedinPromise = fetch("/api/linkedin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ linkedin: safePayload.linkedin }),
+        });
+      }
+
+      // Await both promises in parallel
+      const [salaryResponse, linkedinResponse] = await Promise.all([salaryPromise, linkedinPromise]);
+
+      const salaryData = await salaryResponse.json();
+      console.log("📥 CLIENT: Received response from /api/salary:", salaryData);
+
+      let linkedinData = null;
+      if (linkedinResponse) {
+        linkedinData = await linkedinResponse.json();
+        console.log("📥 CLIENT: Received response from /api/linkedin:", linkedinData);
+      }
 
       if (onSubmitSuccess) {
         // Collect snippet strings to pass to the chart aggregator
-        const marketData = data.serperData ? data.serperData.map((d: any) => d.snippet) : [];
-        
+        const marketData = salaryData.serperData ? salaryData.serperData.map((d: any) => d.snippet) : [];
+
         onSubmitSuccess({
           formData, // Send all form data to ResultsView for comparison
-          marketData
+          marketData,
+          linkedinData: linkedinData?.linkedinData // We will pass this to the next step
         });
       }
-      
+
     } catch (error) {
       console.error("❌ CLIENT: Error calling backend:", error);
     } finally {
@@ -130,7 +152,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
   return (
     <div className="w-full max-w-2xl mx-auto backdrop-blur-xl bg-white/70 dark:bg-zinc-900/70 shadow-2xl rounded-3xl p-8 md:p-12 border border-white/20 dark:border-zinc-800/50 transition-all duration-300 hover:shadow-emerald-500/10">
       <form onSubmit={handleSubmit} className="space-y-6">
-        
+
         {/* Job Title */}
         <div className="space-y-2 group">
           <label htmlFor="jobTitle" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 transition-colors group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400">
@@ -269,7 +291,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
         {/* Optional Fields Panel */}
         <div className={`space-y-6 overflow-hidden transition-all duration-500 ease-in-out ${showOptional ? 'max-h-[1000px] opacity-100 mt-6' : 'max-h-0 opacity-0 m-0'}`}>
           <div className="p-6 bg-zinc-50/50 dark:bg-zinc-900/50 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/50 space-y-6">
-            
+
             {/* Name */}
             <div className="space-y-2 group">
               <label htmlFor="name" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 transition-colors group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400">
@@ -390,7 +412,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
               <span>{isLoading ? "Generando..." : "Generar"}</span>
             </div>
           </button>
-          
+
           <button
             type="button"
             onClick={handleFillSample}

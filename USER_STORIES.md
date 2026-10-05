@@ -60,12 +60,12 @@ This document outlines the sequential phases and user stories for the AI Cover L
 - [x] Extracts salary ranges for similar positions.
 - [x] **Security**: Serper API key is never exposed to the client.
 
-### 7. Proxycurl API Route Handler (LinkedIn History)
+### 7. Enrich Layer API Route Handler (LinkedIn History)
 **Description**: Create a Next.js Route Handler to extract work history from a LinkedIn profile.
 **Acceptance Criteria**:
-- [ ] Route Handler receives the LinkedIn URL (if provided).
-- [ ] Securely fetches the user's professional summary and experience using Proxycurl.
-- [ ] **Security**: Proxycurl API key is never exposed to the client.
+- [x] Route Handler receives the LinkedIn URL (if provided).
+- [x] Securely fetches the user's professional summary and experience using Enrich Layer.
+- [x] **Security**: Enrich Layer API key is never exposed to the client.
 
 ### 8. Gemini Pro API Route Handler (Cover Letter Generation)
 **Description**: Create a Next.js Route Handler that leverages the Gemini Pro model to write the cover letter.
