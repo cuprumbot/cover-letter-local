@@ -18,6 +18,52 @@ export default function CoverLetterForm() {
   });
 
   const [showOptional, setShowOptional] = useState(false);
+  const [sampleIndex, setSampleIndex] = useState(0);
+
+  const sampleData = [
+    {
+      jobTitle: "Desarrollador Full Stack",
+      company: "Telus International",
+      experienceYears: "4",
+      currentSalary: "18000",
+      desiredSalary: "22000",
+      name: "Carlos Mendoza",
+      linkedin: "https://linkedin.com/in/carlosmendoza-gt",
+      aboutYou: "Desarrollador Full Stack con experiencia en React y Node.js. Apasionado por crear interfaces rápidas y escalables.",
+      jobOffer: "Buscamos un desarrollador Full Stack con 3+ años de experiencia. Conocimientos en AWS y bases de datos NoSQL son un plus.",
+      location: "Ciudad de Guatemala",
+    },
+    {
+      jobTitle: "Ingeniero de Datos",
+      company: "Banco Industrial",
+      experienceYears: "5",
+      currentSalary: "20000",
+      desiredSalary: "25000",
+      name: "Ana Sofía Barrios",
+      linkedin: "https://linkedin.com/in/anabarrios-data",
+      aboutYou: "Ingeniera de datos especializada en pipelines ETL con Python y Spark. Experiencia optimizando consultas complejas.",
+      jobOffer: "Se requiere Ingeniero de Datos senior para liderar la migración hacia arquitecturas basadas en nube. Fuertes habilidades en SQL y Big Data.",
+      location: "Guatemala",
+    },
+    {
+      jobTitle: "Desarrollador Frontend",
+      company: "Cervecería Ambev Guatemala",
+      experienceYears: "2",
+      currentSalary: "12000",
+      desiredSalary: "16000",
+      name: "Luis Castillo",
+      linkedin: "https://linkedin.com/in/lcastillo-front",
+      aboutYou: "Especialista en React y Tailwind CSS, enfocado en accesibilidad y diseño responsivo con experiencia en metodologías ágiles.",
+      jobOffer: "Posición para desarrollador Frontend enfocado en e-commerce. Experiencia con Next.js y Vercel es altamente valorada.",
+      location: "Guatemala",
+    }
+  ];
+
+  const handleFillSample = () => {
+    setFormData(sampleData[sampleIndex]);
+    setSampleIndex((prev) => (prev + 1) % sampleData.length);
+    setShowOptional(true); // Expande para que se vean todos los datos
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -280,7 +326,7 @@ export default function CoverLetterForm() {
           </div>
         </div>
 
-        <div className="pt-4">
+        <div className="pt-4 space-y-4">
           <button
             type="submit"
             className="w-full relative group overflow-hidden rounded-xl bg-zinc-900 dark:bg-white px-8 py-4 text-white dark:text-zinc-900 font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
@@ -290,6 +336,14 @@ export default function CoverLetterForm() {
               <Sparkles size={20} className="group-hover:animate-pulse" />
               <span>Generar</span>
             </div>
+          </button>
+          
+          <button
+            type="button"
+            onClick={handleFillSample}
+            className="w-full py-3 px-8 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 text-zinc-600 dark:text-zinc-400 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all duration-200 active:scale-[0.98]"
+          >
+            Llenar con datos de prueba
           </button>
         </div>
       </form>

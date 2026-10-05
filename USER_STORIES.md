@@ -34,11 +34,11 @@ This document outlines the sequential phases and user stories for the AI Cover L
 ### 4. Sample Data Generator
 **Description**: Add a button to populate the form with realistic sample data to speed up testing and usage.
 **Acceptance Criteria**:
-- [ ] A button is placed below the submit button to fill the form with example data.
-- [ ] Clicking the button multiple times cycles through different samples.
-- [ ] Data reflects the Guatemala tech market (e.g., Job Titles like "Desarrollador Full Stack", "Ingeniero de Datos").
-- [ ] Uses real, non-generic local companies (e.g., "Telus", "Banco Industrial").
-- [ ] Salary samples reflect realistic local ranges in GTQ (Quetzales).
+- [x] A button is placed below the submit button to fill the form with example data.
+- [x] Clicking the button multiple times cycles through different samples.
+- [x] Data reflects the Guatemala tech market (e.g., Job Titles like "Desarrollador Full Stack", "Ingeniero de Datos").
+- [x] Uses real, non-generic local companies (e.g., "Telus", "Banco Industrial").
+- [x] Salary samples reflect realistic local ranges in GTQ (Quetzales).
 
 ### 5. Client-Side Sanitization & Payload Structuring
 **Description**: Implement the local orchestration step that prepares the data to be sent to the backend, strictly separating sensitive info.
