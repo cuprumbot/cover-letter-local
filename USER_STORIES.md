@@ -19,17 +19,17 @@ This document outlines the sequential phases and user stories for the AI Cover L
 ### 2. Main Input Form (Required Fields)
 **Description**: Create the main UI form with the required inputs for the cover letter.
 **Acceptance Criteria**:
-- [ ] Form includes fields: "Puesto al que aplicas", "Empresa", "Años de experiencia", "Salario actual" (GTQ), "Salario deseado" (GTQ).
-- [ ] All UI labels and placeholders are in Spanish.
-- [ ] Currency inputs clearly indicate Quetzales (GTQ / Q).
-- [ ] Form has a primary submit button labeled "Generar".
+- [x] Form includes fields: "Puesto al que aplicas", "Empresa", "Años de experiencia", "Salario actual" (GTQ), "Salario deseado" (GTQ).
+- [x] All UI labels and placeholders are in Spanish.
+- [x] Currency inputs clearly indicate Quetzales (GTQ / Q).
+- [x] Form has a primary submit button labeled "Generar".
 
 ### 3. Optional Details Panel
 **Description**: Implement a hidden panel for optional details that expands upon user interaction.
 **Acceptance Criteria**:
-- [ ] Include a button labeled "Más detalles" to toggle the visibility of optional fields.
-- [ ] Optional fields include: "Tu nombre", "Tu perfil de Linkedin" (must validate for a valid URL), "Acerca de ti", "Oferta laboral a la que aplicas", and "Ubicación".
-- [ ] "Ubicación" defaults to "Guatemala".
+- [x] Include a button labeled "Más detalles" to toggle the visibility of optional fields.
+- [x] Optional fields include: "Tu nombre", "Tu perfil de Linkedin" (must validate for a valid URL), "Acerca de ti", "Oferta laboral a la que aplicas", and "Ubicación".
+- [x] "Ubicación" defaults to "Guatemala".
 
 ### 4. Sample Data Generator
 **Description**: Add a button to populate the form with realistic sample data to speed up testing and usage.

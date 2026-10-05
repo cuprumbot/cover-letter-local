@@ -24,7 +24,7 @@
 
 ## Version Control Rules
 - Clearly mark the finished features with `[x]` in `USER_STORIES.md`
-- After each feature has been completed and reviewed by the user, you must automatically stage and commit your changes (`git add .` and `git commit`).
+- After each feature has been completed, reviewed and aproved by the user, stage and commit your changes (`git add .` and `git commit`).
 - Use the Conventional Commits specification for the message (e.g., `feat(auth): add Next.js route handler`, `fix(ui): correct tailwind padding`).
 - Summarize the commit based on the specific user story completed and the actual diff of the code.
 
