@@ -1,6 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import CoverLetterForm from "@/components/CoverLetterForm";
+import ResultsView, { ResultsData } from "@/components/ResultsView";
 
 export default function Home() {
+  const [resultsData, setResultsData] = useState<ResultsData | null>(null);
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 font-sans selection:bg-emerald-500/30">
       {/* Premium Background Mesh */}
@@ -10,7 +16,7 @@ export default function Home() {
         <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-cyan-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000" />
       </div>
 
-      <main className="relative max-w-5xl mx-auto p-6 pt-20 pb-24 md:p-12 md:pt-32">
+      <main className="relative max-w-5xl mx-auto p-6 pt-20 pb-24 md:p-12 md:pt-32 z-10">
         <div className="text-center mb-16 space-y-4">
           <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-medium tracking-wide">
             Potenciado por IA
@@ -23,7 +29,11 @@ export default function Home() {
           </p>
         </div>
 
-        <CoverLetterForm />
+        {resultsData ? (
+          <ResultsView data={resultsData} onDismiss={() => setResultsData(null)} />
+        ) : (
+          <CoverLetterForm onSubmitSuccess={(data) => setResultsData(data)} />
+        )}
       </main>
     </div>
   );

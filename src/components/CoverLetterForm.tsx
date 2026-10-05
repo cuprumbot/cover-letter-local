@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Sparkles, Briefcase, Building2, Clock, User, Link, MapPin, AlignLeft, FileText, ChevronDown, ChevronUp } from "lucide-react";
 
-export default function CoverLetterForm() {
+export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?: (data: any) => void }) {
   const [formData, setFormData] = useState({
     jobTitle: "",
     company: "",
@@ -109,6 +109,16 @@ export default function CoverLetterForm() {
 
       const data = await response.json();
       console.log("📥 CLIENT: Received response from backend:", data);
+
+      if (onSubmitSuccess) {
+        // Collect snippet strings to pass to the chart aggregator
+        const marketData = data.serperData ? data.serperData.map((d: any) => d.snippet) : [];
+        
+        onSubmitSuccess({
+          formData, // Send all form data to ResultsView for comparison
+          marketData
+        });
+      }
       
     } catch (error) {
       console.error("❌ CLIENT: Error calling backend:", error);

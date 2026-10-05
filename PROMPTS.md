@@ -99,3 +99,32 @@ Work autonomously end-to-end:
     Run npm run build to verify there are zero build or type errors. If you hit any errors, debug and resolve them independently.
 
 Only stop when User Story #6 is fully verified, then report what was done.
+
+---
+
+We will jump from User Story #6 directly to #9 so we can show the results from Serper.
+
+Execute User Story #9 from USER_STORIES.md.
+
+Adhere strictly to the rules in AGENTS.md and the requirements in SPEC.md. Run all necessary terminal commands to scaffold the project, set up the directory structure, install dependencies, and remove boilerplate code.
+
+Work autonomously end-to-end:
+
+    Use `ref/serper` as reference. Those files are from a previous implementation.
+
+    Use Serper to get information from Glassdoor about salary ranges for the role and organization.
+
+    Show the result from Serper in the frontend:
+    - Dismiss the form and show a panel for the salary comparison. Create a placeholder below that will later contain the cover letter.
+    - Use the info from Glassdoor to calculate the range for the salary. Make sure you are displaying the info in monthly quetzales (GTQ / Q). If you find the salary in USD, or yearly, make the calculations needed. Use an exchange rate of 1 USD = 7.8 GTQ.
+    - Display a simple line graph that shows the range from Glassdoor, the user's current salary and their desired salary. Also show the increase percentage.
+    - Display a simple message in spanish stating if the desired salary is realistic. The salary is realistic if it is inside the range.
+    - If it is not possible to calculate a range, due to incomplete or badly formatted data, indicate that the desired salary is realistic if it is at most a 20% increase over the current one.
+
+    Add prints to console to debug and verify which info is being sent between the frontend and backend.
+
+    Complete each step required by the story's acceptance criteria without asking for intermediate approvals.
+
+    Run npm run build to verify there are zero build or type errors. If you hit any errors, debug and resolve them independently.
+
+Only stop when User Story #9 is fully verified, then report what was done.
