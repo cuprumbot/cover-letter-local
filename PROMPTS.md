@@ -128,3 +128,25 @@ Work autonomously end-to-end:
     Run npm run build to verify there are zero build or type errors. If you hit any errors, debug and resolve them independently.
 
 Only stop when User Story #9 is fully verified, then report what was done.
+
+---
+
+Let's go back to User Story #7.
+
+Execute User Story #7 from USER_STORIES.md.
+
+Adhere strictly to the rules in AGENTS.md and the requirements in SPEC.md. Run all necessary terminal commands to scaffold the project, set up the directory structure, install dependencies, and remove boilerplate code.
+
+Work autonomously end-to-end:
+
+    Add prints to console to debug and verify which info is being between frontend and backend.
+
+    Print in the server console which information is being sent to Proxycurl, so we can make sure no sensitive information leaves our app.
+
+    Complete each step required by the story's acceptance criteria without asking for intermediate approvals.
+
+    Run npm run build to verify there are zero build or type errors. If you hit any errors, debug and resolve them independently.
+
+    Do not commit. I have to manually test the changes first.
+
+Only stop when User Story #7 is fully verified, then report what was done.
