@@ -150,7 +150,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto backdrop-blur-xl bg-white/70 dark:bg-zinc-900/70 shadow-2xl rounded-3xl p-8 md:p-12 border border-white/20 dark:border-zinc-800/50 transition-all duration-300 hover:shadow-emerald-500/10">
+    <div className="w-full max-w-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] rounded-xl p-8 md:p-10">
       <form onSubmit={handleSubmit} className="space-y-6">
 
         {/* Job Title */}
@@ -404,21 +404,20 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full relative group overflow-hidden rounded-xl bg-zinc-900 dark:bg-white px-8 py-4 text-white dark:text-zinc-900 font-medium transition-all duration-300 shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98] hover:shadow-xl'}`}
+            className={`w-full rounded-lg bg-zinc-900 dark:bg-white px-8 py-3 text-white dark:text-zinc-900 font-medium transition-colors ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-zinc-800 dark:hover:bg-zinc-200'}`}
           >
-            {!isLoading && <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-emerald-500 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />}
-            <div className="relative flex items-center justify-center gap-2">
-              <Sparkles size={20} className={isLoading ? "animate-spin" : "group-hover:animate-pulse"} />
-              <span>{isLoading ? "Generando..." : "Generar"}</span>
+            <div className="flex items-center justify-center gap-2">
+              <Sparkles size={18} className={isLoading ? "animate-spin" : ""} />
+              <span>{isLoading ? "Creando..." : "Crear carta"}</span>
             </div>
           </button>
 
           <button
             type="button"
             onClick={handleFillSample}
-            className="w-full py-3 px-8 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 text-zinc-600 dark:text-zinc-400 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all duration-200 active:scale-[0.98]"
+            className="w-full py-3 px-8 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] text-zinc-600 dark:text-zinc-400 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
           >
-            Llenar con datos de prueba
+            Usar datos de ejemplo
           </button>
         </div>
       </form>

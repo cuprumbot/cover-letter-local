@@ -278,7 +278,7 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
   const getPos = (val: number) => Math.max(0, Math.min(100, ((val - scaleMin) / (scaleMax - scaleMin)) * 100));
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="flex flex-col gap-8 w-full max-w-5xl mx-auto">
       <button 
         onClick={onDismiss}
         className="flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors self-start"
@@ -289,16 +289,13 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Local Salary Panel */}
-        <div className="lg:col-span-1 flex flex-col gap-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-900/20 border border-emerald-100 dark:border-emerald-800/50 rounded-2xl p-6 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-            <TrendingUp className="w-32 h-32 text-emerald-500" />
+        <div className="lg:col-span-1 flex flex-col gap-4 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+            <TrendingUp className="w-32 h-32 text-zinc-900 dark:text-zinc-100" />
           </div>
           
-          <h2 className="text-xl font-bold text-emerald-900 dark:text-emerald-300 flex items-center gap-2 z-10">
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 z-10">
             Análisis Salarial
-            <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 rounded-full">
-              Local Context
-            </span>
           </h2>
 
           <div className="flex flex-col gap-3 mt-2 z-10">
@@ -331,10 +328,10 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
               </div>
             </div>
             
-            <div className="flex flex-col gap-3 bg-white/60 dark:bg-black/20 p-4 rounded-xl border border-white dark:border-white/5 mt-1">
+            <div className="flex flex-col gap-3 p-4 border border-zinc-200 dark:border-zinc-800 rounded-xl mt-1">
               <div className="flex justify-between items-center">
-                <span className="text-xs uppercase tracking-wider font-bold text-zinc-500 dark:text-zinc-400">Promedio de la empresa</span>
-                <span className="font-bold text-zinc-800 dark:text-zinc-200 text-sm">{marketRangeStr}</span>
+                <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Promedio de la empresa</span>
+                <span className="font-bold text-zinc-900 dark:text-zinc-100 text-sm">{marketRangeStr}</span>
               </div>
               
               {/* Line Graph */}
@@ -375,24 +372,24 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
             </div>
           </div>
 
-          <div className="mt-2 p-4 bg-white/80 dark:bg-black/40 rounded-xl border border-white dark:border-zinc-800 shadow-sm z-10 flex flex-col gap-4">
+          <div className="mt-2 p-4 border border-zinc-200 dark:border-zinc-800 rounded-xl flex flex-col gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 {isRealistic ? (
-                  <div className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-full">
-                    <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  <div className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full">
+                    <CheckCircle className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
                   </div>
                 ) : isUnrealistic ? (
-                  <div className="p-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-full">
-                    <AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                  <div className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full">
+                    <AlertCircle className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
                   </div>
                 ) : (
                   <div className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full">
-                    <HelpCircle className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
+                    <HelpCircle className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
                   </div>
                 )}
                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                  ¿Expectativa realista? <span className={isRealistic ? "text-green-600 dark:text-green-400" : isUnrealistic ? "text-orange-600 dark:text-orange-400" : "text-zinc-600"}>{isRealistic ? "Sí" : isUnrealistic ? "No" : "Desconocido"}</span>
+                  ¿Expectativa realista? <span className="font-medium">{isRealistic ? "Sí" : isUnrealistic ? "No" : "Desconocido"}</span>
                 </h3>
               </div>
               <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed ml-9">
@@ -400,13 +397,13 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
               </p>
             </div>
 
-            <div className="border-t border-emerald-100 dark:border-emerald-900/30 pt-3">
+            <div className="border-t border-zinc-200 dark:border-zinc-800 pt-3">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded">
-                  Nota Privada de Negociación
+                <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                  Nota privada de negociación
                 </span>
               </div>
-              <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed italic border-l-2 border-emerald-300 dark:border-emerald-700 pl-3 py-1">
+              <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed italic border-l-2 border-zinc-300 dark:border-zinc-700 pl-3 py-1">
                 {negotiationTip}
               </p>
             </div>
@@ -414,13 +411,9 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
         </div>
 
         {/* Cover Letter Placeholder Panel */}
-        <div className="lg:col-span-2 flex flex-col gap-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm">
+        <div className="lg:col-span-2 flex flex-col gap-4 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-xl p-6">
           <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-emerald-500" />
             Carta de Presentación
-            <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full">
-              Gemini AI
-            </span>
           </h2>
           
           {isGenerating ? (
@@ -455,10 +448,10 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
                 </button>
                 <button
                   onClick={onDismiss}
-                  className="flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition-colors shadow-sm"
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-lg text-sm font-medium transition-colors"
                 >
                   <RefreshCcw className="w-4 h-4" />
-                  Generar otra carta
+                  Crear nueva carta
                 </button>
               </div>
             </div>
