@@ -4,7 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 export async function POST(request: Request) {
   try {
     const payload = await request.json();
-    
+
     // Log the received information on the server's console
     console.log("----------------------------------------");
     console.log("SERVER (/api/generate): Received payload from frontend:");
@@ -12,13 +12,13 @@ export async function POST(request: Request) {
     console.log("----------------------------------------");
 
     // Destructure payload
-    const { 
-      jobTitle, 
-      company, 
-      experienceYears, 
-      aboutYou, 
-      jobOffer, 
-      linkedinData 
+    const {
+      jobTitle,
+      company,
+      experienceYears,
+      aboutYou,
+      jobOffer,
+      linkedinData
     } = payload;
 
     // Sanitize linkedinData to ensure no names or PII are passed to the prompt
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     if (linkedinData) {
       // Create a deep copy to avoid mutating original
       sanitizedLinkedinData = JSON.parse(JSON.stringify(linkedinData));
-      
+
       // We know Enrich Layer returns summary and experiences. 
       // If there's any 'name' field, delete it.
       if (sanitizedLinkedinData.name) {
@@ -83,7 +83,7 @@ Please write the cover letter now in Spanish.
     }
 
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    
+
     const response = await ai.models.generateContent({
       model: 'gemini-3.8-flash',
       contents: prompt,
@@ -91,9 +91,9 @@ Please write the cover letter now in Spanish.
 
     const generatedText = response.text;
 
-    return NextResponse.json({ 
-      success: true, 
-      letter: generatedText 
+    return NextResponse.json({
+      success: true,
+      letter: generatedText
     });
   } catch (error) {
     console.error("Error generating cover letter:", error);

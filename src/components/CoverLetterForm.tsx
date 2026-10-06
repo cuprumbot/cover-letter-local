@@ -102,43 +102,45 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
     setIsLoading(true);
     try {
       // 1. Fetch Salary Context
-      const salaryPromise = fetch("/api/salary", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(safePayload),
-      });
-
-      // 2. Fetch LinkedIn Profile (if provided)
-      let linkedinPromise: Promise<Response | null> = Promise.resolve(null);
-      if (safePayload.linkedin) {
-        console.log("🔗 CLIENT: LinkedIn URL detected. Fetching data from /api/linkedin...", { linkedin: safePayload.linkedin });
-        linkedinPromise = fetch("/api/linkedin", {
+      let salaryData = { serperData: [] };
+      try {
+        const salaryResponse = await fetch("/api/salary", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ linkedin: safePayload.linkedin }),
+          body: JSON.stringify(safePayload),
         });
+        salaryData = await salaryResponse.json();
+        console.log("📥 CLIENT: Received response from /api/salary:", salaryData);
+      } catch (err) {
+        console.warn("⚠️ CLIENT: Offline or Error fetching /api/salary");
       }
 
-      // Await both promises in parallel
-      const [salaryResponse, linkedinResponse] = await Promise.all([salaryPromise, linkedinPromise]);
-
-      const salaryData = await salaryResponse.json();
-      console.log("📥 CLIENT: Received response from /api/salary:", salaryData);
-
+      // 2. Fetch LinkedIn Profile (if provided)
       let linkedinData = null;
-      if (linkedinResponse) {
-        linkedinData = await linkedinResponse.json();
-        console.log("📥 CLIENT: Received response from /api/linkedin:", linkedinData);
+      if (safePayload.linkedin) {
+        console.log("🔗 CLIENT: LinkedIn URL detected. Fetching data from /api/linkedin...", { linkedin: safePayload.linkedin });
+        try {
+          const linkedinResponse = await fetch("/api/linkedin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ linkedin: safePayload.linkedin }),
+          });
+          const parsedLinkedin = await linkedinResponse.json();
+          linkedinData = parsedLinkedin?.linkedinData || null;
+          console.log("📥 CLIENT: Received response from /api/linkedin:", parsedLinkedin);
+        } catch (err) {
+          console.warn("⚠️ CLIENT: Offline or Error fetching /api/linkedin");
+        }
       }
 
       if (onSubmitSuccess) {
         // Collect snippet strings to pass to the chart aggregator
-        const marketData = salaryData.serperData ? salaryData.serperData.map((d: any) => d.snippet) : [];
+        const marketData = Array.isArray(salaryData.serperData) ? salaryData.serperData.map((d: any) => d.snippet) : [];
 
         onSubmitSuccess({
           formData, // Send all form data to ResultsView for comparison
           marketData,
-          linkedinData: linkedinData?.linkedinData // We will pass this to the next step
+          linkedinData
         });
       }
 

@@ -5,10 +5,6 @@ Este documento detalla los requerimientos faltantes para completar con éxito la
 ## ❌ Lo que hace falta (Action Required)
 
 
-### 2. Funcionamiento Sin Conexión (`Condiciones mínimas` & `Entregables`)
-- **Requisito:** *"Sin conexión, la app sigue entregando algo útil."* & *"Funciona de punta a punta, con y sin conexión"*
-- **Estado Actual:** Si el usuario no tiene internet, las peticiones a la API de Next.js (`/api/salary` y `/api/generate`) fallan, mostrando probablemente un error de red.
-- **Acción:** Implementar un mecanismo de *fallback*. Si no hay red (atrapando el error de `fetch` o revisando `navigator.onLine`), la app debe proveer la nota de negociación usando una constante base local (en vez de usar Serper) y generar una carta de presentación básica y genérica usando plantillas locales (interpolación de strings). Un Service Worker (setup PWA) podría ser necesario para servir la UI offline.
 
 ### 3. Una API de IA Adicional (`APIs Adicionales`)
 - **Requisito:** *"Además del modelo en la nube, integra dos APIs adicionales: una de IA (...) y una de cualquier otro tipo."*
@@ -36,6 +32,7 @@ Este documento detalla los requerimientos faltantes para completar con éxito la
 ---
 
 ## ✅ Lo que ya está completado
+- **Funcionamiento Sin Conexión:** Se implementaron *fallbacks* (interceptando fallas de API locales o de red) para continuar operando offline. La app genera una carta de presentación estática genérica e informa si la expectativa salarial es realista evaluando un incremento menor al 20% dentro del estándar local.
 - **Pruebas Automatizadas de Privacidad:** Se implementó una prueba End-to-End con Playwright que intercepta la red para demostrar irrefutablemente que el salario actual y el nombre nunca salen del dispositivo.
 - **Generación de Carta y Nota de Negociación:** La app funciona, pide franqueza en los datos y devuelve los dos entregables de forma útil.
 - **Arquitectura Split Brain:** Lógica separada correctamente (heurística local mediante regex para salarios, modelo en la nube para generación de texto).
