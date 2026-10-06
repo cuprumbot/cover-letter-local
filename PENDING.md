@@ -6,14 +6,6 @@ Este documento detalla los requerimientos faltantes para completar con éxito la
 
 
 
-### 3. Una API de IA Adicional (`APIs Adicionales`)
-- **Requisito:** *"Además del modelo en la nube, integra dos APIs adicionales: una de IA (...) y una de cualquier otro tipo."*
-- **Estado Actual:** Contamos con el modelo principal en la nube (Gemini Pro) y dos APIs de "otro tipo" (Serper y Proxycurl). **Falta una API de IA secundaria**.
-- **Acción:** Seleccionar e integrar un servicio de IA adicional. Ideas:
-  - API de Text-to-Speech (ej. ElevenLabs o Google TTS) para "escuchar" la carta de presentación.
-  - API de generación de imágenes para crear un fondo creativo o avatar basado en el rol.
-  - Un modelo pequeño/edge local para análisis de tono o traducción.
-
 
 ### 5. Artículo (`Entregables`)
 - **Requisito:** *"Un artículo enfocado en un área... Enseña lo que aprendiste a alguien que nunca ha oído de split brain..."*
@@ -23,6 +15,7 @@ Este documento detalla los requerimientos faltantes para completar con éxito la
 ---
 
 ## ✅ Lo que ya está completado
+- **API de IA Adicional (Omitida):** Se decidió omitir la implementación de una API de IA adicional (como TTS o Traducción) para mantener la pureza y simplicidad del demo técnico de *Split-Brain*.
 - **Documentación Detallada de las APIs:** Se incluyó en el `README.md` una sección detallada y separada para cada API (Gemini, Serper, Proxycurl) explicando autenticación, manejo de errores, costos, y los payloads enviados.
 - **Funcionamiento Sin Conexión:** Se implementaron *fallbacks* (interceptando fallas de API locales o de red) para continuar operando offline. La app genera una carta de presentación estática genérica e informa si la expectativa salarial es realista evaluando un incremento menor al 20% dentro del estándar local.
 - **Pruebas Automatizadas de Privacidad:** Se implementó una prueba End-to-End con Playwright que intercepta la red para demostrar irrefutablemente que el salario actual y el nombre nunca salen del dispositivo.
