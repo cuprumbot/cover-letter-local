@@ -176,3 +176,38 @@ Work autonomously end-to-end:
     Run npm run build to verify there are zero build or type errors. If you hit any errors, debug and resolve them independently.
 
 Only stop when User Story #5 is fully verified, then report what was done.
+
+---
+
+Based on the documentation found in `ref/generador-excusas/README.md` and using the `excalidraw-diagram` modify our `README.md` to document the project.
+
+The documentation must be in spanish. We will generate the english version at a later time.
+
+Make sure to include the following sections:
+- Explain what the app does.
+- Explain split brain. Include tables to show:
+    - The local brain is code using regex to get salary information. The cloud model is Gemini to generate the cover letters.
+    - The reasons for this architecture: Privacy, we don't want sensitive information to be sent to an external LLM. Latency, we can show the user the salary analysis while they wait for the cover letter.
+- Explain the split brain decisions. Sensitive data such as salaries and user name are never sent to an external LLM, regex are enough to get the salary information. The user Linkedin URL is only sent to our server and retrieved using a traditional API, this URL is optional. 
+- Explain the tools used.
+- Leave a placeholder where we will add screenshots of the web app later.
+- Architecture:
+    - Generate architecture diagrams using the `excalidraw-diagram` skills. 
+    - Use tables to explain what happens locally, what happens in the server, what is sent to an external LLM.
+    - Explain the heuristics. Use a table to explain how the salary analysis is done locally, using the information from Serper/Glassdoor.
+    - Explain where the split brain decisions are, show a snippet of code showing where do we decide what to send and what to work locally.
+- APIs:
+    - Explain which APIs are used and how are they used. Show snippets of code.
+    - Explain how authentication work and where and how the credentials are stored.
+    - Explain what happens if some API fails or works slowly.
+    - Explain how much each API call costs.
+Privacy:
+    - Explain which data we send to each API. Show snippets of code.
+Prompts:
+    - Explain the prompts used to generate the cover letter using Gemini.
+- Explain the project structure.
+- Explain the how to configure and run the project.
+
+You should only modify `README.md`, not any code. You can create additional files if needed for the diagrams. Do not modify any code from the project.
+
+Do not commit any change, I will check the results first.
