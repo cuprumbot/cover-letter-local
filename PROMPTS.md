@@ -211,3 +211,49 @@ Prompts:
 You should only modify `README.md`, not any code. You can create additional files if needed for the diagrams. Do not modify any code from the project.
 
 Do not commit any change, I will check the results first.
+
+---
+
+Use the `excalidraw-diagram` skill.
+
+The Excalidraw diagrams were not correctly rendered. Retry rendering and update the `README.md` accordingly.
+
+Do not modify any file not related to the diagrams and documentation. Do not stop until the diagrams are properly rendered. Do not commit the results, I will check them first.
+
+---
+
+Use the `excalidraw-diagram` skill. If the skill is not the correct one for the task, do not perform the task and notify me instead.
+
+The diagrams were rendered but their quality is terrible. Those are not proper architecture diagram. Refer to `ref/generador-excusas/README.md` for the expected type of diagram and quality.
+
+Generate architecture diagrams for our application, they must show how each part of the web app connects. The relations must be shown in the diagram per se, not with a block of text inside it.
+
+Use a professional color scheme.
+
+If you create any aux script, store them in some folder in case we need to reuse them later.
+
+Do not modify the code of the app. Do not commit any change until I have reviewed them.
+
+---
+
+Analyze this codebase and describe the architecture. Include all major components, how they connect, what technologies they use, and any cloud services or integrations. Format as a list for an architecture diagram. Save the result in `ARCHITECTURE_DIAGRAM.md`
+
+Then use the `architecture-diagram` skill to create an architecture diagram from the description in that file.
+
+Render the diagrams as images and update the `README.md` to include them in the correct spaces.
+
+Check that the images were correctly generated and included, repeat if something failed.
+
+Do not commit the changes. I will review them first.
+
+---
+
+I checked and improved `ARCHITECTURE_DIAGRAM.md`.
+
+Use the `architecture-diagram` skill to create an architecture diagram from the description in that file.
+
+Render the diagrams as images and update the `README.md` to include them in the correct spaces.
+
+Check that the images were correctly generated and included, repeat if something failed.
+
+Do not commit the changes. I will review them first.
