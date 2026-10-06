@@ -135,3 +135,10 @@ c:\Users\luisr\cover-letter-local
    npm run dev
    ```
    Abre [http://localhost:3000](http://localhost:3000) en el navegador.
+
+4. **Pruebas Automatizadas (Playwright):**
+   La aplicación incluye pruebas End-to-End para verificar matemáticamente que los datos sensibles nunca abandonan el dispositivo en el tráfico de red. Para correrlas:
+   ```bash
+   npx playwright test
+   ```
+   *Revisa el archivo `AUTOMATED_TESTING.md` para un análisis profundo sobre la arquitectura de estas pruebas.*
