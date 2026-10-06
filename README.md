@@ -72,11 +72,26 @@ if (linkedinData) {
 
 ## Integración con APIs, Costos y Privacidad
 
-| API | Uso | Costo | Autenticación | Si falla... | Privacidad (Qué se envía) |
-| --- | --- | --- | --- | --- | --- |
-| **Serper (Google Search)** | Extraer snippets de Glassdoor | ~$0.001 por llamada | Route handler con `X-API-KEY`. | Se usan datos locales precargados de simulación o fallback lógico (verificación de incremento salarial +20%). | Título del puesto, empresa y país ("Guatemala"). |
-| **Proxycurl / Enrich Layer** | Extraer experiencia del perfil de LinkedIn | ~$0.015 por llamada | Route handler con token `Bearer`. | Se utiliza el campo "Acerca de mí" ingresado por el usuario, sin perfil extendido. | **Únicamente la URL** del perfil de LinkedIn. |
-| **Gemini Pro (Google AI)** | Generar la carta usando `gemini-3.8-flash` | Varía (Free tier a veces) | Route handler, usando `@google/genai` con `GEMINI_API_KEY`. | Retorna una carta mock en caso de ausencia de API o falla. | Resumen personal, Puesto, Empresa, Años Exp, URL de Job (Sin PII, sin nombre, sin salarios). |
+### 1. Gemini Pro (Google AI)
+- **Uso:** Redactar la carta de presentación persuasiva.
+- **Autenticación:** Llamada Server-side a través del SDK `@google/genai`. La credencial vive en la variable de entorno `GEMINI_API_KEY` (`.env.local`). Nunca se expone en el cliente.
+- **Manejo de Fallos (Offline):** Si la API falla por timeout o falta de conexión, la interfaz captura el error en el navegador y automáticamente inyecta una plantilla de carta de presentación genérica local (fallback) para que el usuario pueda usarla de todas formas.
+- **Costo:** Capa gratuita (Free tier) de Google AI Studio, o ~$0.075 por millón de tokens (usando la familia Flash de Gemini).
+- **Payload (Privacidad):** Se envían los años de experiencia, resumen profesional, puesto y empresa. **Nunca** se incluye el nombre del usuario, su salario actual ni sus expectativas (estos últimos nunca tocan las APIs).
+
+### 2. Serper (Google Search API)
+- **Uso:** Extraer promedios salariales públicos buscando en portales como Glassdoor.
+- **Autenticación:** Server-side route handler. La credencial es `SERPER_API_KEY` (`.env.local`) y se inyecta en el header HTTP `X-API-KEY`.
+- **Manejo de Fallos (Offline):** Si la API no responde o devuelve un error, el backend lo maneja y devuelve un arreglo vacío. El frontend detecta la ausencia de datos y entra en un *fallback* heurístico: valida la solicitud analizando matemáticamente si el aumento es ≤ 20% y si cae dentro del rango estándar local (Q15K - Q25K).
+- **Costo:** ~$0.001 por llamada.
+- **Payload (Privacidad):** Solo se envía la cadena de texto: `"[Puesto] [Empresa] Glassdoor salary Guatemala"`. Sin datos personales.
+
+### 3. Proxycurl / Enrich Layer (LinkedIn Scraper)
+- **Uso:** Opcional. Extraer la trayectoria laboral detallada partiendo de un enlace público.
+- **Autenticación:** Server-side route handler. Usa la credencial `PROXYCURL_API_KEY` (`.env.local`) pasada por el header `Bearer`.
+- **Manejo de Fallos:** Si falla (ej. URL privada o caída del servicio), el backend lo procesa y la aplicación simplemente retrocede a generar la carta usando solo el campo "Acerca de mí" ingresado por el usuario.
+- **Costo:** ~$0.015 por petición.
+- **Payload (Privacidad):** **Únicamente** se envía la URL pública del perfil. Cuando el payload regresa, el backend borra proactivamente el campo `name` antes de compartir la experiencia con Gemini.
 
 ### Los Prompts de Gemini
 
@@ -98,7 +113,7 @@ A este prompt se le adjuntan, serializados, los años de experiencia, la empresa
 ## Estructura del Proyecto
 
 ```
-c:\Users\luisr\cover-letter-local
+cover-letter-local
 ├── src/
 │   ├── app/
 │   │   ├── api/

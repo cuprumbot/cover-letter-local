@@ -14,15 +14,6 @@ Este documento detalla los requerimientos faltantes para completar con éxito la
   - API de generación de imágenes para crear un fondo creativo o avatar basado en el rol.
   - Un modelo pequeño/edge local para análisis de tono o traducción.
 
-### 4. Documentación Detallada de las APIs (`Entregables`)
-- **Requisito:** *"Para cada API documenta cómo se autentica y dónde vive la credencial, qué pasa si falla o tarda, cuánto cuesta y qué datos le envías."*
-- **Estado Actual:** El archivo `README.md` explica la arquitectura y el flujo de datos de forma general, pero omite los detalles técnicos requeridos.
-- **Acción:** Actualizar el `README.md` para incluir una sección dedicada a cada API (Gemini, Serper, Proxycurl, y la nueva API de IA). Documentar explícitamente:
-  - Autenticación y ubicación de credenciales.
-  - Manejo de fallos / Timeouts.
-  - Costo de las llamadas.
-  - Qué datos se incluyen en los payloads.
-  - **Extra:** Documentar también cómo ejecutar las pruebas automatizadas de privacidad.
 
 ### 5. Artículo (`Entregables`)
 - **Requisito:** *"Un artículo enfocado en un área... Enseña lo que aprendiste a alguien que nunca ha oído de split brain..."*
@@ -32,6 +23,7 @@ Este documento detalla los requerimientos faltantes para completar con éxito la
 ---
 
 ## ✅ Lo que ya está completado
+- **Documentación Detallada de las APIs:** Se incluyó en el `README.md` una sección detallada y separada para cada API (Gemini, Serper, Proxycurl) explicando autenticación, manejo de errores, costos, y los payloads enviados.
 - **Funcionamiento Sin Conexión:** Se implementaron *fallbacks* (interceptando fallas de API locales o de red) para continuar operando offline. La app genera una carta de presentación estática genérica e informa si la expectativa salarial es realista evaluando un incremento menor al 20% dentro del estándar local.
 - **Pruebas Automatizadas de Privacidad:** Se implementó una prueba End-to-End con Playwright que intercepta la red para demostrar irrefutablemente que el salario actual y el nombre nunca salen del dispositivo.
 - **Generación de Carta y Nota de Negociación:** La app funciona, pide franqueza en los datos y devuelve los dos entregables de forma útil.
