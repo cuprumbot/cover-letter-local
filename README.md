@@ -2,19 +2,13 @@
 
 Genera cartas de presentación altamente persuasivas para aplicar a ofertas laborales, sin comprometer tu privacidad. A diferencia de un ChatGPT genérico, la aplicación utiliza una arquitectura *split brain* ("cerebro dividido") para asegurar que tu información sensible nunca llegue a los modelos de inteligencia artificial externos, mientras te ofrece retroalimentación valiosa en tiempo real.
 
-## Demo en Video
+## Demo
 
-![Demo Generando Carta](docs/assets/demo.webp)
+### 1. Ingreso de Datos
+![Formulario de Ingreso](docs/assets/form_screenshot.png)
 
-<details>
-<summary><b>Ver Capturas de Pantalla (Screenshots)</b></summary>
-
-### Interfaz de Resultados y Análisis Salarial
-![Resultado Superior](docs/assets/app_result_top.png)
-
-### Carta Generada y Nota Privada
-![Nota Privada](docs/assets/app_result_private.png)
-</details>
+### 2. Carta Generada y Análisis Salarial
+![Pantalla de Resultados](docs/assets/result_screenshot.png)
 
 
 ## Qué hace la aplicación
