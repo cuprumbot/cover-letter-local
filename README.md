@@ -28,7 +28,6 @@ Ingresas los datos del puesto al que aplicas, la empresa, tus años de experienc
 | --- | --- |
 | **Privacidad** | El salario deseado, salario actual y nombre del usuario **nunca** son enviados a Gemini ni a Serper. |
 | **Latencia** | El análisis salarial utiliza reglas rápidas locales (regex) para parsear los datos devueltos por Serper, de modo que el usuario puede ver los tips salariales al instante mientras espera que se termine de escribir la carta. |
-| **Calidad** | Gemini Pro redacta la carta creativa, y el código tradicional asegura que la ortografía de los nombres o números sea exacta reemplazándolos y restaurándolos localmente. |
 | **Seguridad** | Las claves de las APIs externas nunca están en el cliente; todas las llamadas pasan por el servidor (Next.js Route Handlers). |
 
 ### Los cerebros en el proceso
@@ -42,8 +41,6 @@ Ingresas los datos del puesto al que aplicas, la empresa, tus años de experienc
 | Análisis de texto de salarios (Regex) | Local (Navegador) | Lógica matemática y parseo rápido sin necesidad de LLM y latencia extra. |
 | Creación de la carta de presentación | Nube (Gemini) | Requiere creatividad avanzada para conectar la experiencia con la oferta. |
 | Restauración del nombre del usuario | Local (Navegador) | El nombre real solo existe localmente para firmar la carta terminada. |
-
-[PLACEHOLDER: SCREENSHOTS DE LA APP AQUÍ]
 
 ---
 

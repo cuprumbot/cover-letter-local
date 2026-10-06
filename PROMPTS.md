@@ -257,3 +257,33 @@ Render the diagrams as images and update the `README.md` to include them in the 
 Check that the images were correctly generated and included, repeat if something failed.
 
 Do not commit the changes. I will review them first.
+
+---
+
+Write an article in spanish, in specific neutral latinoamerican spanish. The output must be as ready to publish in Medium or Substack as possible. Write it in `article/ARTICLE.md`. Use an engaging tone.
+
+This is the original requirement for the article:
+
+    Enseña lo que aprendiste a alguien que nunca ha oído de split brain, con diagramas y capturas. Incluye al menos un error o decisión real de tu proyecto. Puede estar en medium o substack.
+
+Write this content in the article:
+- What is the split brain architecture.
+- Explain that split brain doesn't necessarily means multiple LLMs, that one brain can be code using regex, if statements, etc.
+- Explain our past version:
+    - Refer to the documents in `ref/past-version`.
+    - We previously had a LLM running in the browser, in fact we tried with several models (refer to `LOCAL_MODEL.md`).
+    - Explain that it failed either because the model could not be downloaded or could not be run.
+    - Only the smallest models were able to be run, but those often hallucinated words or didn't produce the desired output.
+- We decided against running a local model on the server side:
+    - We could have ran it in the development computer, but deploying it could become expensive.
+    - Having the model anywhere but the browser meant that the user current salary, perhaps the most sensitive data, would have to be sent outside their browser.
+- Our current implementation:
+    - We use Serper to get Glassdoor information and send that information to the browser.
+    - The information is raw, literally the result of a Google search.
+    - It usually has enough information so we can extract the salary range using regex. Sometimes it is in GTQ, other times in USD; sometimes it is monthly, other times it is yearly; some additional calculations were needed.
+    - Some of the USD data seemed wrong, unusually high or low values. We decided to not use USD data if we already had GTQ data, as the local GTQ data seemed more trustworthy.
+    - Finally we set some rules to give the analysis. These rules are simple enough that could be implemented with if statements without the need of an LLM.
+
+The article needs some screenshots and diagrams. Put them in the `article` folder. If you are gonna use the ones we already have, copy them (don't just move them) to that folder. If you need to generate new ones use the `architecture-diagram` skill and the `ARCHITECTURE_DIAGRAM.md` information.
+
+Do not commit any change, let me review first.
