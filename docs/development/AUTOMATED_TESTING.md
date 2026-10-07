@@ -2,7 +2,7 @@
 
 Este documento detalla cómo está configurado el entorno de pruebas para la aplicación, centrándose específicamente en verificar la arquitectura *Split-Brain* y las garantías de privacidad de los datos sensibles de la persona usuaria.
 
-## 🎭 Por qué usamos Playwright
+## Por qué usamos Playwright
 
 Para cumplir con el requerimiento de demostrar que el **salario actual y el nombre nunca salen del dispositivo**, escogimos **Playwright** (un framework de pruebas End-to-End).
 
@@ -13,7 +13,7 @@ Playwright nos permite levantar el navegador real (Chromium), interactuar con la
 
 ---
 
-## 🚀 Cómo ejecutar las pruebas
+## Cómo ejecutar las pruebas
 
 Sigue estos pasos para correr la prueba automatizada que verifica la privacidad del *Split-Brain*.
 
