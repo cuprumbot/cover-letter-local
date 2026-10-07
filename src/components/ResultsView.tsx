@@ -9,8 +9,8 @@ export interface ResultsData {
 }
 
 export function getAggregatedMarketRange(marketData: string[]): { min: number | null, max: number | null } {
-  console.log("--- DEBUG: getAggregatedMarketRange START ---");
-  console.log("Raw marketData received:", marketData);
+  // console.log("--- DEBUG: getAggregatedMarketRange START ---");
+  // console.log("Raw marketData received:", marketData);
 
   const gtqValues: number[] = [];
   const usdValues: number[] = [];
@@ -20,7 +20,7 @@ export function getAggregatedMarketRange(marketData: string[]): { min: number | 
   const regex = /(?:([$€]|USD|EUR|GTQ|Q)\s*)?([\d.,]+)([kK]?)(?:\s*(?:\/|per|por|a\s+un|al)\s*(mo|month|mes|yr|year|año|anual|annual))?/gi;
 
   marketData.forEach((str, index) => {
-    console.log(`\n--- Parsing snippet [${index}]: "${str}" ---`);
+    // console.log(`\n--- Parsing snippet [${index}]: "${str}" ---`);
 
     const snippetHasYearly = /yr|year|año|anual|annual/i.test(str);
     const snippetHasMonthly = /mo|month|mes/i.test(str);
@@ -35,7 +35,7 @@ export function getAggregatedMarketRange(marketData: string[]): { min: number | 
       snippetCurrencyType = "EUR";
     }
 
-    console.log(`Snippet Context -> hasYearly: ${snippetHasYearly}, hasMonthly: ${snippetHasMonthly}, fallbackMultiplier: ${snippetMultiplier} (${snippetCurrencyType})`);
+    // console.log(`Snippet Context -> hasYearly: ${snippetHasYearly}, hasMonthly: ${snippetHasMonthly}, fallbackMultiplier: ${snippetMultiplier} (${snippetCurrencyType})`);
 
     let match;
     let foundAny = false;
@@ -92,7 +92,7 @@ export function getAggregatedMarketRange(marketData: string[]): { min: number | 
       if (isYearly) value /= 12;
       const finalMonthlyGTQ = value;
 
-      console.log(`Match "${match[0]}" -> Origin: ${currencyType} -> isYearly: ${isYearly} -> Calculated: Q${finalMonthlyGTQ.toFixed(2)} / month`);
+      // console.log(`Match "${match[0]}" -> Origin: ${currencyType} -> isYearly: ${isYearly} -> Calculated: Q${finalMonthlyGTQ.toFixed(2)} / month`);
 
       if (currencyType === "GTQ") {
         gtqValues.push(finalMonthlyGTQ);
@@ -103,38 +103,38 @@ export function getAggregatedMarketRange(marketData: string[]): { min: number | 
       }
     }
 
-    if (!foundAny) console.log("No numbers matched in this snippet.");
+    // if (!foundAny) console.log("No numbers matched in this snippet.");
   });
 
-  console.log("\n--- AGGREGATION & FILTERING ---");
-  console.log("Values originally GTQ:", gtqValues);
-  console.log("Values calculated from USD:", usdValues);
-  console.log("Values calculated from EUR/Other:", otherValues);
+  // console.log("\n--- AGGREGATION & FILTERING ---");
+  // console.log("Values originally GTQ:", gtqValues);
+  // console.log("Values calculated from USD:", usdValues);
+  // console.log("Values calculated from EUR/Other:", otherValues);
 
   let finalValuesToUse: number[] = [];
 
   // Prioritize GTQ values if we have enough to form a meaningful datapoint
   if (gtqValues.length >= 1) {
-    console.log("🟢 Using ONLY GTQ values (discarding USD/Other) because we found explicit local data.");
+    // console.log("🟢 Using ONLY GTQ values (discarding USD/Other) because we found explicit local data.");
     finalValuesToUse = gtqValues;
   } else if (usdValues.length >= 1) {
-    console.log("🟡 No GTQ values found. Falling back to calculated USD values.");
+    // console.log("🟡 No GTQ values found. Falling back to calculated USD values.");
     finalValuesToUse = usdValues;
   } else if (otherValues.length >= 1) {
-    console.log("🟠 No GTQ or USD values found. Falling back to Other/EUR values.");
+    // console.log("🟠 No GTQ or USD values found. Falling back to Other/EUR values.");
     finalValuesToUse = otherValues;
   }
 
   if (finalValuesToUse.length === 0) {
-    console.log("--- DEBUG END: No valid values found, returning null ---");
+    // console.log("--- DEBUG END: No valid values found, returning null ---");
     return { min: null, max: null };
   }
 
   const min = Math.round(Math.min(...finalValuesToUse));
   const max = Math.round(Math.max(...finalValuesToUse));
 
-  console.log(`✅ Final Selected Range -> Min: Q${min}, Max: Q${max}`);
-  console.log("--- DEBUG: getAggregatedMarketRange END ---");
+  // console.log(`✅ Final Selected Range -> Min: Q${min}, Max: Q${max}`);
+  // console.log("--- DEBUG: getAggregatedMarketRange END ---");
 
   return { min, max };
 }
@@ -150,7 +150,7 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
     let isMounted = true;
     const generateLetter = async () => {
       try {
-        console.log("CLIENT: Requesting cover letter from /api/generate...");
+        // console.log("CLIENT: Requesting cover letter from /api/generate...");
         const response = await fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -165,7 +165,7 @@ export default function ResultsView({ data, onDismiss }: { data: ResultsData, on
         });
 
         const result = await response.json();
-        console.log("CLIENT: Received cover letter response:", result);
+        // console.log("CLIENT: Received cover letter response:", result);
         
         if (!response.ok || !result.success) {
           throw new Error("API falló o el dispositivo está desconectado.");

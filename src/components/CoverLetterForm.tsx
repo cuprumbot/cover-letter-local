@@ -27,7 +27,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
       experienceYears: "4",
       currentSalary: "18000",
       desiredSalary: "22000",
-      name: "Christian Brolo",
+      name: "Christian Torre",
       linkedin: "https://www.linkedin.com/in/christian-andres-brolo-torre-2b93ab112/",
       aboutYou: "QA Test Engineer. Apasionado por crear interfaces rápidas y escalables.",
       jobOffer: "Buscamos un desarrollador Full Stack con 3+ años de experiencia. Conocimientos en AWS y bases de datos NoSQL son un plus.",
@@ -40,7 +40,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
       currentSalary: "20000",
       desiredSalary: "25000",
       name: "Ana Sofía Barrios",
-      linkedin: "https://www.linkedin.com/in/sundarpichai",
+      linkedin: "https://www.linkedin.com/in/christian-andres-brolo-torre-2b93ab112/",
       aboutYou: "Ingeniera de datos especializada en pipelines ETL con Python y Spark. Experiencia optimizando consultas complejas.",
       jobOffer: "Se requiere Ingeniero de Datos senior para liderar la migración hacia arquitecturas basadas en nube. Fuertes habilidades en SQL y Big Data.",
       location: "Guatemala",
@@ -52,7 +52,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
       currentSalary: "12000",
       desiredSalary: "16000",
       name: "Luis Castillo",
-      linkedin: "https://www.linkedin.com/in/satyanadella",
+      linkedin: "https://www.linkedin.com/in/christian-andres-brolo-torre-2b93ab112/",
       aboutYou: "Especialista en React y Tailwind CSS, enfocado en accesibilidad y diseño responsivo con experiencia en metodologías ágiles.",
       jobOffer: "Posición para desarrollador Frontend. Experiencia con Next.js y Vercel es altamente valorada.",
       location: "Guatemala",
@@ -94,10 +94,10 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
       desiredSalary: formData.desiredSalary,
     };
 
-    console.log("--- START: Payload Verification ---");
-    console.log("📡 CLIENT: Sending safe payload to backend:", safePayload);
-    console.log("🔒 CLIENT: Data kept ONLY locally:", sensitiveLocalData);
-    console.log("--- END: Payload Verification ---");
+    // console.log("--- START: Payload Verification ---");
+    // console.log("📡 CLIENT: Sending safe payload to backend:", safePayload);
+    // console.log("🔒 CLIENT: Data kept ONLY locally:", sensitiveLocalData);
+    // console.log("--- END: Payload Verification ---");
 
     setIsLoading(true);
     try {
@@ -110,7 +110,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
           body: JSON.stringify(safePayload),
         });
         salaryData = await salaryResponse.json();
-        console.log("📥 CLIENT: Received response from /api/salary:", salaryData);
+        // console.log("📥 CLIENT: Received response from /api/salary:", salaryData);
       } catch (err) {
         console.warn("⚠️ CLIENT: Offline or Error fetching /api/salary");
       }
@@ -118,7 +118,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
       // 2. Fetch LinkedIn Profile (if provided)
       let linkedinData = null;
       if (safePayload.linkedin) {
-        console.log("🔗 CLIENT: LinkedIn URL detected. Fetching data from /api/linkedin...", { linkedin: safePayload.linkedin });
+        // console.log("🔗 CLIENT: LinkedIn URL detected. Fetching data from /api/linkedin...", { linkedin: safePayload.linkedin });
         try {
           const linkedinResponse = await fetch("/api/linkedin", {
             method: "POST",
@@ -127,7 +127,7 @@ export default function CoverLetterForm({ onSubmitSuccess }: { onSubmitSuccess?:
           });
           const parsedLinkedin = await linkedinResponse.json();
           linkedinData = parsedLinkedin?.linkedinData || null;
-          console.log("📥 CLIENT: Received response from /api/linkedin:", parsedLinkedin);
+          // console.log("📥 CLIENT: Received response from /api/linkedin:", parsedLinkedin);
         } catch (err) {
           console.warn("⚠️ CLIENT: Offline or Error fetching /api/linkedin");
         }
